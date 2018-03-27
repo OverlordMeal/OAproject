@@ -1,0 +1,18 @@
+.process_bar {
+	height: 18px;
+	background: green;
+	float: left;
+	margin-bottom: 10px;
+}
+
+.process_text {
+	margin-bottom: 10px;
+	overflow: hidden; text-overflow:ellipsis;
+	width: 100%
+}
+
+.process_file_name {
+	margin-bottom: 10px;
+	overflow: hidden; text-overflow:ellipsis;
+	width: 100%
+}

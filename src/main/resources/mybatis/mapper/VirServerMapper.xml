@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cloud.manage.dao.VirServerDao">
+
+		<select id="findPage" resultType="org.cloud.manage.model.VirServer" parameterType="org.cloud.manage.model.vo.VirServerQuery">
+		select 	*  from t_vir_server t
+		<where>
+			<if test="query.disk != null">
+				AND t.disk like CONCAT('%',CONCAT(#{query.disk},'%'))
+			</if>
+			<if test="query.ipType != null">
+				AND t.ip_type like CONCAT('%',CONCAT(#{query.ipType},'%'))
+			</if>
+			<if test="query.proTag != null">
+				AND t.pro_tag like CONCAT('%',CONCAT(#{query.proTag},'%'))
+			</if>
+			<if test="query.phyServerId != null">
+				AND t.phy_server_id like CONCAT('%',CONCAT(#{query.phyServerId},'%'))
+			</if>
+		</where>
+	</select>
+	
+	
+	<select id="findPhyServerId" resultType="Long">
+		select a.id from t_phy_server a
+	</select>
+	<select id="findPhyServerName" resultType="String">
+		SELECT CONCAT(a.id ,'号', a.server_model) FROM t_phy_server a
+	</select>
+	<select id="findPhyServerIp" resultType="String">
+		SELECT a.ip_address FROM t_phy_server a
+	</select>
+	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert
+		into t_vir_server
+		(phy_server_id,
+		ip_type,
+		system_os,
+		memory,
+		cpu,
+		disk,
+		pro_tag,
+		app,
+		comment)
+		values
+		(#{phyServerId},
+		#{ipType},
+		#{systemOs},
+		#{memory},
+		#{cpu},
+		#{disk},
+		#{proTag},
+		#{app},
+		#{comment})
+	</insert>
+	
+	<update id="update" parameterType="org.cloud.manage.model.VirServer">
+		update t_vir_server
+		   set phy_server_id       = #{phyServerId},
+		       ip_type        = #{ipType},
+		       system_os   = #{systemOs},
+		       memory  = #{memory},
+		       cpu   = #{cpu},
+		       disk 		  = #{disk},
+		       pro_tag 		  = #{proTag},
+		       app 		  = #{app},
+		       comment 		  = #{comment}
+		 where id = #{id}
+	</update>
+	
+	
+	<delete id="delete" parameterType="Long">
+		delete from t_vir_server where id = #{id}
+	</delete>
+	
+	
+	
+	<select id="findById" parameterType="Long" resultType="org.cloud.manage.model.VirServer">
+		select * from t_vir_server where id = #{id}  
+	</select>
+
+
+</mapper>

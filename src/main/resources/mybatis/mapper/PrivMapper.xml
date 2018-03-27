@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cloud.manage.dao.PrivDao">
+	
+	<select id="findPage" resultType="org.cloud.manage.model.Priv" parameterType="org.cloud.manage.model.vo.PrivQuery">
+		select t.* from T_PRIV t
+		<where>
+			<if test="query.name != null ">  
+				AND t.name like CONCAT('%',CONCAT(#{query.name},'%'))
+			</if>
+			<if test="query.comments != null ">  
+				AND t.comments like CONCAT('%',CONCAT(#{query.comments},'%'))
+			</if>
+		</where> 
+		
+		<if test="query.orderByField != null">
+			order by ${query.orderByField}
+		</if>
+	</select>
+	
+	<select id="findAll" resultType="org.cloud.manage.model.Priv">
+		select t.* from T_PRIV t order by t.id desc
+	</select>
+	
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into t_priv
+		  (NAME, COMMENTS)
+		values
+		  (#{name}, #{comments})
+	</insert>
+	
+	<select id="findById" resultType="org.cloud.manage.model.Priv" parameterType="long">
+		select t.* from T_PRIV t where t.id = #{id}
+	</select>
+	
+	<update id="update">
+		update t_priv set name=#{name},comments=#{comments} where id=#{id}
+	</update>
+	
+	<delete id="delete" parameterType="long">
+		delete from t_priv where id=#{id}
+	</delete>
+	
+	<insert id="addPrivMenu">
+		insert into T_PRIV_MENU
+		  (PRIV_ID, MENU_ID)
+		values
+		<foreach collection="menuIds" item="menuId" index="index" separator="," > 
+	      (#{privId}, #{menuId})
+	    </foreach> 
+	</insert>
+	
+	<delete id="deletePrivMenuByPrivId" parameterType="long">
+		delete from T_PRIV_MENU where priv_id = #{privId}
+	</delete>
+	
+	<select id="findByRoleId" parameterType="long" resultType="org.cloud.manage.model.Priv">
+		select b.* from t_role_priv a, t_priv b where a.priv_id = b.id and a.role_id = #{roleId}
+	</select>
+	
+	<delete id="deletePrivMenuByMenuId" parameterType="long">
+		delete from T_PRIV_MENU where menu_id = #{menuId}
+	</delete>
+	
+</mapper>

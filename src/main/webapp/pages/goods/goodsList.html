@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/d17-demand-manage/easyUi/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css"
+		href="/d17-demand-manage/easyUi/themes/icon.css">
+		<link rel="stylesheet" type="text/css"
+			href="/d17-demand-manage/css/zTreeStyle/zTreeStyle.css">
+			<link rel="stylesheet" type="text/css"
+				href="/d17-demand-manage/css/common.css">
+
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/jquery/jquery-1.8.3.min.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/easyUi/jquery.easyui.min.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/common/config.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/common/utils.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/common/common.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/jquery/jquery.ztree.all-3.5.min.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/selectTree.js"></script>
+</head>
+
+<body>
+	<div data-options="closable:true" class="listPage">
+		<div class="easyui-panel" type="panel"
+			style="padding: 5px; height: 100%;">
+			<table id="dataGridGoods" type="dataGrid"
+				data-options="toolbar:'#toolBar'" style="height: 100%">
+			</table>
+			<div id="toolBar" style="padding: 5px; height: auto">
+				<div style="margin-bottom: 5px">
+					<table cellspacing="0" cellpadding="0">
+						<tr>
+							<td><a href="javascript:void(0);" class="easyui-linkbutton"
+								iconCls="icon-add" plain="true" onclick="newGoods();">增加商品信息</a></td>
+							<td>
+								<div class="datagrid-btn-separator"></div>
+							</td>
+							<td><a href="javascript:void(0);" class="easyui-linkbutton"
+								iconCls="icon-edit" plain="true" onclick="editGoods();">编辑信息</a></td>
+							<td>
+								<div class="datagrid-btn-separator"></div>
+							</td>
+							<td><a href="javascript:void(0);" class="easyui-linkbutton"
+								iconCls="icon-remove" plain="true" onclick="destoryGoods();">删除商品信息</a></td>
+						</tr>
+					</table>
+				</div>
+				<div>
+					
+					对应物理ip地址: 	<input class="easyui-input" style="width: 80px" id="phyServerId" name="phyServerId"> 
+					
+							<a href="javascript:void(0);"
+							class="easyui-linkbutton" iconCls="icon-search"
+							onclick="searchGoods();">查询</a>
+				</div>
+			</div>
+
+			<div id="win"></div>
+
+		</div>
+	</div>
+
+	<script type="text/javascript">
+			var lastIndex;
+		
+			$('#dataGridGoods').datagrid({
+				rownumbers : true,
+				title : '物理商品信息列表',
+				pagination : true,//分页控件  
+				singleSelect : true,
+				url : config.baseURL + '/goods/getGoodsList.json',
+				loadMsg : '数据装载中......',
+				fitColumns:true,
+				queryParams : {
+					
+				},
+				columns : [ [ {
+					field : 'id',
+					title : '商品标识ID',
+					align : 'center',
+					hidden : false,
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'goodsName',
+					title : '商品名字',
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}, {	
+					field : "goodsTypeEdi" ,
+					title : '商品型号',
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}, {	
+					field : "goodsTypeIpt" ,
+					title : '进口信息',
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}, {	
+					field : "goodsTypeExp" ,
+					title : '保质期',
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}
+				 ] ]
+			});
+			//设置分页控件  
+			var p = $('#dataGridGoods').datagrid('getPager');
+			$(p).pagination({
+				pageSize : 10,//每页显示的记录条数，默认为10  
+				pageList : [ 5, 10, 15 ],//可以设置每页记录条数的列表  
+				beforePageText : '第',//页数文本框前显示的汉字  
+				afterPageText : '页    共 {pages} 页',
+				displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录'
+			});
+			function newGoods() {
+				var _html = '';
+				var content = '<iframe  frameborder="0"  src="/d17-demand-manage/pages/goods/add.html" style="width:100%;height:100%;"></iframe>';
+				$('#win').window({
+					title : '新增',
+					width : 700,
+					height : 350,
+					modal : true,
+					collapsible : false
+				}).window('center').html(content);
+			}
+			
+			function editGoods() {
+				var row = $('#dataGridGoods').datagrid('getSelected');
+				if (row) {
+					var _html = '';
+					var content = '<iframe  frameborder="0"  src="/d17-demand-manage/pages/goods/edit.html" style="width:100%;height:100%;"></iframe>';
+					content = content + '<input type="hidden" id="id" name="id" value="'+row.id+'">';
+					$('#win').window({
+						title : '修改',
+						width : 700,
+						height : 400,
+						modal : true,
+						collapsible : false
+					}).window('center').html(content);
+				} else {
+					$.messager.alert('系统提示', '请选择一行!', 'warning');
+				}
+			}
+			function searchGoods() {
+				var queryParams = $('#dataGridGoods').datagrid('options').queryParams;
+				queryParams.proTag = $("#proTag").val();
+				queryParams.ipType = $("#ipType").val()+',"ipAddress":"'+$("#ipAddress").val();
+				queryParams.disk = $("#disk").val();
+				queryParams.phyServerId = $("#phyServerId").val();
+				$('#dataGridGoods').datagrid('reload');
+			}
+			
+			function destoryGoods() {
+				var row = $('#dataGridGoods').datagrid('getSelected');
+				if (row) {
+					$.messager.confirm('系统提示', '您是否要删除当前选中的商品吗？', function(data) {
+						if (data) {
+							$.ajax({
+								type : "POST",
+								async : false,
+								url : config.baseURL + 'goods/delete.json',
+								dataType : "json",
+								data : {
+									"id" : row.id,
+								},
+								success : function(data) {
+									searchGoods();
+								},
+								error : function() {
+										$.messager.alert('系统提示', '删除失败', 'error');
+								}
+							});
+						}
+					})
+				} else {
+					$.messager.alert('系统提示', '请选择一行!', 'warning');
+				}
+			}
+			$(document).ready(function(){
+				
+			});
+		</script>
+</body>
+</html>

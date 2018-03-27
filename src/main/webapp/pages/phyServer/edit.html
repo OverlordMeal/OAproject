@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	
+	<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/icon.css">
+	<link rel="stylesheet" type="text/css"  href="/d17-demand-manage/css/zTreeStyle/zTreeStyle.css">
+		
+	<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/easyUi/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/common/config.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/common/common.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/selectTree.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery.ztree.all-3.5.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery.form.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/My97DatePicker/WdatePicker.js"></script>
+
+</head>
+<body>
+	<div style="margin:10px 0;"></div>
+	<div class="easyui-panel" >
+		<div style="padding-bottom: 10px; padding-top: 10px;">
+	    <form id="ff" method="post">
+	    <input type="hidden" id="id" name="id">
+	    <input type="hidden" id="superId" name="superId">
+	    	<table style="margin: auto;">
+	    				<td>服务器IP地址:</td>
+							<td><input class="easyui-validatebox" type="text"
+								name="ipAddress" id="ipAddress" style="width: 180px;"
+								data-options="required:true"></input></td>
+							<td>服务器类型:</td>
+							<td><input class="easyui-validatebox" type="text"
+								name="serverModel" id="serverModel" style="width: 180px;"
+								data-options="required:true"></input></td>
+						</tr>
+						<tr>
+							<td>服务器CPU:</td>
+							<td><input class="easyui-validatebox" type="text" name="cpu"
+								id="cpu" style="width: 180px;" data-options="required:true"></input></td>
+							<td>服务器内存:</td>
+							<td><input class="easyui-validatebox" type="text"
+								name="memory" id="memory" style="width: 180px;"
+								data-options="required:true"></input></td>
+
+						</tr>
+						<tr>
+							<td>服务器接口数量:</td>
+							<td><input class="easyui-validatebox" type="text"
+								name="ethernets" id="ethernets" style="width: 180px;"
+								data-options="required:true"></input></td>
+							<td>备注信息:</td>
+							<td><input class="easyui-validatebox" type="text"
+								name="comment" id="comment" style="width: 180px;"></input></td>
+						</tr>
+						<tr>
+							<td>上线时间:</td>
+							<td><input id="onlineTime" name="onlineTime" type="text" style="width: 180px;"/>
+							<img onclick="WdatePicker({el:'onlineTime'})" src="/d17-demand-manage/js/My97DatePicker//skin/datePicker.gif" width="16" height="22" align="absmiddle">
+							</td>
+						</tr>
+						<tr>
+							<td>连接信息:</td>
+							<td colspan="3" id="linkPlace">
+								<input type="button" value="增加" id="addLink"/>
+								<span>格式为服务器端口-交换机号-交换机端口</span>
+							</td>
+						</tr>
+	    	</table>
+	    </form>
+	    </div>
+	    <div style="text-align:center;padding:5px">
+	    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">提交</a>
+	    </div>
+	</div>
+	<script>
+		function submitForm() {
+			
+			var arry = [];
+			$.each($("#linkPlace div"), function(index, val) {
+				arry.push($(this).find("[flag='serverEth']").val() + "&" 
+						+ $(this).find("[flag='serverSwitches']").val().replace(/[^0-9]/ig,"")+ "&" 
+						+ $(this).find("[flag='serverSwitchesEth']").val());
+			});
+			if ($("#ff").form('validate')) {
+				var options = {
+						dataType : 'json',
+						type : 'post',
+						url : config.baseURL + 'phyServer/update.json',
+						data : {
+							arry : arry.join(",")
+						},
+						success : function(data) {
+							parent.$('#win').window('close');
+							location.href = config.baseURL + 'pages/phyServer/phyServerList.html';
+							parent.searchList();
+						},
+				        error : function() {
+				        	$.messager.alert('系统提示', '修改失败!', 'error');
+							return false;
+				        }
+					};
+					$('#ff').ajaxSubmit(options);
+			}
+		}
+		
+		$(document).ready(function() {
+			 var switchesArr =[];
+			$.ajax({ 
+				dataType : 'json',
+				type : 'post',
+				url : config.baseURL + 'phyServer/findSwichesList.json',
+				success: function(data){
+		       switchesArr = (data.switchesIdList);
+		       switchesArr1 = (data.switchesModelList);
+		      }});
+			$.ajax({
+		        type: "POST",
+		        url: config.baseURL + "phyServer/edit.json",
+		        dataType: "json",
+		        data : {
+		            "id" : parent.$('#id').val(),
+		        },
+		        success: function(data){
+		        	var bean = data.bean;
+		        	$("#id").val(bean.id),
+		        	$("#ipAddress").val(bean.ipAddress),
+					$("#ethernets").val(bean.ethernets),
+					$("#serverModel").val(bean.serverModel),
+					$("#cpu").val(bean.cpu),
+					$("#memory").val(bean.memory),
+					$("#comment").val(bean.comment),
+		        	$("#onlineTime").val(bean.onlineTimeStr);
+		       for (var j = 0; j <bean.linkList.length; j++) {
+				
+			
+			    		var _html = '<div>';
+						_html += '<input style="width:50px;" flag="serverEth" value ="'+bean.linkList[j].serverEth +'"/>';
+						_html += '-<select flag="serverSwitches">';
+						_html += '<option >交换机ID：'+bean.linkList[j].switchesId+'</option>';
+						for (var i = 0; i < switchesArr.length; i++) {
+							_html += '<option >'+switchesArr[i]+"号"+switchesArr1[i]+'</option>';
+						}
+						_html += '</select>';
+						_html += '-<input style="width:50px;" flag="serverSwitchesEth"value ="'+bean.linkList[j].switchesEth +'" />';
+						_html += '<input type="button" flag="del" value="删除"/>';
+						_html += '</div>';
+						_html = $(_html);
+					 	
+						_html.find("[flag='del']").click(function() {
+							$(this).parent().remove();
+						});
+						
+						
+						$("#linkPlace").append(_html);
+						
+		     		  }
+		        },
+		        error : function() { 
+		        	$.messager.alert('系统提示', '数据获取失败!', 'error');
+		        }
+		    });
+			
+		
+			$("#addLink").click(function() {
+				var _html = '<div>';
+				_html += '<input style="width:50px;" flag="serverEth"/>';
+				_html += '-<select flag="serverSwitches">';
+				for (var i = 0; i < switchesArr.length; i++) {
+					_html += '<option >'+switchesArr[i]+"号"+switchesArr1[i]+'</option>';
+				}
+				_html += '</select>';
+				_html += '-<input style="width:50px;" flag="serverSwitchesEth"/>';
+				_html += '<input type="button" flag="del" value="删除"/>';
+				_html += '</div>';
+				_html = $(_html);
+				_html.find("[flag='del']").click(function() {
+					$(this).parent().remove();
+				});
+				
+				$("#linkPlace").append(_html);
+				
+			});
+			
+		});
+	</script>
+</body>
+</html>

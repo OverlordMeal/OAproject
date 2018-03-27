@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/icon.css">
+		<link rel="stylesheet" type="text/css"  href="/d17-demand-manage/css/zTreeStyle/zTreeStyle.css">
+		<link rel="stylesheet" type="text/css"  href="/d17-demand-manage/css/common.css">
+		
+		<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery-1.8.3.min.js"></script>
+		<script type="text/javascript" src="/d17-demand-manage/easyUi/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="/d17-demand-manage/js/common/config.js"></script>
+		<script type="text/javascript" src="/d17-demand-manage/js/common/utils.js"></script>
+		<script type="text/javascript" src="/d17-demand-manage/js/common/common.js"></script>
+		<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery.ztree.all-3.5.min.js"></script>
+		<script type="text/javascript" src="/d17-demand-manage/js/selectTree.js"></script>
+	</head>
+	
+	<body>
+	<div data-options="closable:true"  class="listPage">
+			<div class="easyui-panel" type="panel" style="padding: 5px;height: 100%;"  >
+				<table id="dataGridMenu" type="dataGrid" data-options="toolbar:'#toolBar'" style="height: 100%">
+				</table>
+				<div id="toolBar" style="padding: 5px; height: auto">
+					<div style="margin-bottom: 5px">
+						<table cellspacing="0" cellpadding="0">
+							<tr>
+								<td><a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newMenu();">增加</a></td>
+								<td>
+									<div class="datagrid-btn-separator"></div>
+								</td>
+								<td><a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editMenu();">编辑</a></td>
+								<td>
+									<div class="datagrid-btn-separator"></div>
+								</td>
+								<td><a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyMenu();">删除</a></td>
+							</tr>
+						</table>
+					</div>
+					<div>
+						菜单名称: <input class="easyui-input" style="width: 80px" id="menuName" name="menuName"> 
+						菜单对应的URL: <input class="easyui-input" style="width: 80px" id="url" name="url"> 
+						是否有子菜单: <select name="hasChild" id="hasChild" style="width: 60px" editable="false">
+							<option value="" selected="selected">全部</option>
+							<option value="1">是</option>
+							<option value="0">否</option>
+						</select>
+						父菜单:<input class="easyui-input" style="width: 80px;" name="superName" id="superName" readonly="readonly">
+						<input type="hidden" style="width: 80px;" name="superId" id="superId">
+						<a href="javascript:void(0);" class="easyui-linkbutton"   iconCls="icon-search" onclick="searchList();">查询</a>
+					</div>
+				</div>
+				
+				<div id="win"></div>
+				
+			</div>
+		</div>
+	
+		<script type="text/javascript">
+			var lastIndex;
+		
+			$('#dataGridMenu').datagrid({
+				rownumbers : true,
+				title : '菜单信息列表',
+				pagination : true,//分页控件  
+				singleSelect : true,
+				url : config.baseURL + '/menu/getMenuList.json',
+				loadMsg : '数据装载中......',
+				fitColumns:true,
+				queryParams : {
+					"name" : $("#menuName").val(),
+					"url" : $("#url").val(),
+					"hasChild" : $("#hasChild").val(),
+					"superId" : $("#superId").val()
+				},
+				columns : [ [ {
+					field : 'id',
+					title : '主键',
+					align : 'center',
+					hidden : true,
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'superId',
+					title : '父节点',
+					align : 'center',
+					hidden : true,
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'name',
+					title : '菜单名称',
+					width : 200,
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'superName',
+					title : '父菜单名称',
+					fitColumns : true,
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'seq',
+					title : '排序',
+					fitColumns : true,
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'url',
+					title : '菜单树形路径',
+					fitColumns : true,
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'hasChild',
+					title : '是否有子菜单',
+					fitColumns : true,
+					align : 'center',
+					editor : {
+						type : 'text'
+					},
+					formatter : function(value, rec) {
+						if (value == '1') {
+							return "是";
+						} else {
+							return "否";
+						}
+					}
+				}, {
+					field : 'comments',
+					title : '备注',
+					fitColumns : true,
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				} ] ]
+			});
+			//设置分页控件  
+			var p = $('#dataGridMenu').datagrid('getPager');
+			$(p).pagination({
+				pageSize : 10,//每页显示的记录条数，默认为10  
+				pageList : [ 5, 10, 15 ],//可以设置每页记录条数的列表  
+				beforePageText : '第',//页数文本框前显示的汉字  
+				afterPageText : '页    共 {pages} 页',
+				displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录'
+			});
+		
+			function newMenu() {
+				var _html = '';
+				var content = '<iframe  frameborder="0"  src="/d17-demand-manage/pages/menu/add.html" style="width:100%;height:100%;"></iframe>';
+		
+				$('#win').window({
+					title : '新增',
+					width : 600,
+					height : 250,
+					modal : true,
+					collapsible : false
+				}).window('center').html(content);
+			}
+		
+			function editMenu() {
+				var row = $('#dataGridMenu').datagrid('getSelected');
+				if (row) {
+					var _html = '';
+					var content = '<iframe  frameborder="0"  src="/d17-demand-manage/pages/menu/edit.html" style="width:100%;height:100%;"></iframe>';
+					content = content + '<input type="hidden" id="id" name="id" value="'+row.id+'">';
+					$('#win').window({
+						title : '修改',
+						width : 600,
+						height : 250,
+						modal : true,
+						collapsible : false
+					}).window('center').html(content);
+				} else {
+					$.messager.alert('系统提示', '请选择一行!', 'warning');
+				}
+		
+			}
+		
+			/**删除菜单
+			 */
+			function destroyMenu() {
+				var row = $('#dataGridMenu').datagrid('getSelected');
+				if (row) {
+					alert
+					if (row.superId == -1) {
+						$.messager.alert('系统提示', '无法删除根菜单', 'error');
+						return ;
+					}
+					
+					$.messager.confirm('系统提示', '您是否要删除当前选中的菜单及子菜单吗？', function(data) {
+						if (data) {
+							$.ajax({
+								type : "POST",
+								async : false,
+								url : config.baseURL + 'menu/delete.json',
+								dataType : "json",
+								data : {
+									"id" : row.id,
+									"superId" : row.superId
+								},
+								success : function(data) {
+									searchList();
+								},
+								error : function() {
+									if (row.superId == -1) {
+										$.messager.alert('系统提示', '删除失败,无法删除根菜单', 'error');
+									} else {
+										$.messager.alert('系统提示', '删除失败', 'error');
+									}
+								}
+							});
+						}
+					})
+				} else {
+					$.messager.alert('系统提示', '请选择一行!', 'warning');
+				}
+			}
+		
+			function searchList() {
+				var queryParams = $('#dataGridMenu').datagrid('options').queryParams;
+				queryParams.name = $("#menuName").val();
+				queryParams.url = $("#url").val();
+				queryParams.hasChild = $("#hasChild").val();
+				queryParams.superId = $("#superId").val();
+				$('#dataGridMenu').datagrid('reload');
+			}
+			
+			$(document).ready(function(){
+				$("#superName").click(function() {
+					selectTree.initMenuRadio("superName", function(ids, names) {
+						$("#superName").val(names[0]);
+						$("#superId").val(ids[0]);
+					});
+				});
+			});
+		</script>
+	</body>
+</html>	

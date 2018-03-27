@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>OA办公系统</title>
+<link href="/d17-demand-manage/pages/pc/css/reset-min.css" rel="stylesheet" type="text/css">
+<link href="/d17-demand-manage/pages/pc/css/login.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/pages/pc/js/IE-placeholder.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/pages/pc/js/superslide.2.1.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/js/common/config.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery.form.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/js/login/login.js"></script>
+<!--[if IE 6]>
+<script type="text/javascript" src="js/DD_belatedPNG.js"></script>
+  <div id="kie-bar" class="kie-bar">
+      您现在使用的浏览器版本过低，可能会导致部分图片和信息的缺失。请立即 <a href="http://windows.microsoft.com/zh-cn/internet-explorer/download-ie" class="kie-setup-IE8" seed="kie-setup-IE8" target="_blank" title="免费升级至IE8浏览器">免费升级</a>
+  </div>
+  <style>
+      .kie-bar {
+          height: 24px;
+          line-height: 1.8;
+          font-weight:normal;
+          text-align: center;
+          border-bottom:1px solid #fce4b5;
+          background-color:#FFFF9B;
+          color:#e27839;
+          position: relative;
+          font-size: 14px;
+          text-shadow: 0px 0px 1px #efefef;
+          padding: 5px 0;
+      }
+      .kie-bar a {
+          color:#08c;
+          text-decoration: none;
+      }
+  </style>
+  <![endif]-->
+</head>
+
+<body>
+<div class="header">
+  <img src="/d17-demand-manage/pages/pc/images/login_head.png" style="margin: 0 auto;" />
+  <div class="head-warp grid-960">
+    <div class="logo-warp">
+    </div>
+  <div class="login-wrap">
+    <form id="focus"  method="post" action="/d17-demand-manage/user/login">
+      <a href="#" class="btn_register"></a>
+      <div class="error_box" style="display: none;"><span class="icon_wrong"></span><label id="loginError">用户名或密码错误</label></div>
+      <label class="tit mt5">用户名：</label>
+      <label class="ipt"><input id="userName" name="userName"  type="text" class="input_txt" placeholder="昵称/手机号/身份证/学号"  tabindex="1"/></label>
+      <label class="tit">密&nbsp;&nbsp;&nbsp;码：<span class="fm"></span></label>
+      <input id="password" type="password" name="password" class="input_txt" tabindex="2"/>
+      <div class="cbox">
+          <input value="on" name="autoLogin" type="checkbox" class="cb">
+          <img id="autoLogin" class="chk" src="/d17-demand-manage/pages/pc/images/checkbox.png" tabindex="3"><span>记住登录状态</span>	
+      </div>
+      <a id="signForm" href="javascript:void(0);" class="btn_submit"></a>
+    </form>
+  </div>
+   </div>
+</div>
+<!--头部结束-->
+<div class="fullSlide">
+  <div class="bd">
+    <ul>
+      <li style="background:url(/d17-demand-manage/pages/pc/images/main_pic.jpg) center 0 no-repeat;"></li>
+      <li style="background:url(/d17-demand-manage/pages/pc/images/main_pic2.jpg)  center 0 no-repeat;"></li>
+    </ul>
+  </div>
+  <div class="hd">
+    <ul>
+    </ul>
+  </div>
+</div>
+<!--图片切换结束-->
+<div class="footer">
+    <div class="fbox grid-960">
+        <p class="p1">
+        </p>
+        <div class="clear"></div>
+        <p class="p2">版权信息©1995-2004 Overlord, Inc. All rights reserved.</p>
+    </div>
+</div>
+<script type="text/javascript">
+jQuery(".fullSlide").slide({ titCell:".hd ul", mainCell:".bd ul", effect:"topLoop",  autoPlay:true, autoPage:true, trigger:"click" });//中间轮换图片js,不需要就隐藏掉
+ $(document).ready(function(){
+
+   $("#focus .input_txt").each(function(){
+     var thisVal=$(this).val();
+     //判断文本框的值是否为空，有值的情况就隐藏提示语，没有值就显示
+     if(thisVal!=""){
+       $(this).siblings("span").hide();
+      }else{
+       $(this).siblings("span").show();
+      }
+	//聚焦型输入框验证 
+     $(this).focus(function(){
+       $(this).siblings("span").hide();
+      }).blur(function(){
+        var val=$(this).val();
+        if(val!=""){
+         $(this).siblings("span").hide();
+        }else{
+         $(this).siblings("span").show();
+        } 
+      });
+    })
+  })
+//checkbox
+	$("#autoLogin").toggle(function(){
+			$(".cbox .chk").attr("src","/d17-demand-manage/pages/pc/images/checkbox_select.png");
+			$(".cbox input:checkbox").attr("checked","checked");
+	},function(){
+			$(".cbox .chk").attr("src","/d17-demand-manage/pages/pc/images/checkbox.png");
+			$(".cbox input:checkbox").removeAttr("checked");
+	});
+	
+	login.initSignForm();
+</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta charset="UTF-8">
+
+	<link rel="stylesheet" type="text/css"
+		href="/d17-demand-manage/easyUi/themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css"
+			href="/d17-demand-manage/easyUi/themes/icon.css">
+			<link rel="stylesheet" type="text/css"
+				href="/d17-demand-manage/css/zTreeStyle/zTreeStyle.css">
+
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/jquery/jquery-1.8.3.min.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/easyUi/jquery.easyui.min.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/common/config.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/common/common.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/selectTree.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/jquery/jquery.ztree.all-3.5.min.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/jquery/jquery.form.js"></script>
+				<script type="text/javascript" src="/d17-demand-manage/js/My97DatePicker/WdatePicker.js"></script>
+</head>
+<body>
+	<div style="margin: 10px 0;"></div>
+	<div class="easyui-panel">
+		<div style="padding-bottom: 12px; padding-top: 10px;">
+			<form id="ff" method="post">
+				<input type="hidden" id="superId" name="superId">
+					<table style="margin: auto;">
+						<tr>
+							<td>对应物理服务器Id:</td>
+							<td id="phyServerId" ></td>
+							
+							<td>服务器系统:</td>
+							<td><input class="easyui-validatebox" type="text"
+								name="systemOs" id="systemOs" style="width: 180px;"
+								data-options="required:true" placeholder="请输入服务器系统"></input></td>
+						</tr>
+						<tr>
+							<td>服务器CPU:</td>
+							<td><input class="easyui-validatebox" type="text" name="cpu"
+								id="cpu" style="width: 180px;" data-options="required:true" placeholder="请输入服务器CPU"></input></td>
+							<td>服务器内存:</td>
+							<td><input class="easyui-validatebox" type="text"
+								name="memory" id="memory" style="width: 180px;"
+								data-options="required:true" placeholder="请输入服务器内存"></input></td>
+
+						</tr>
+						<tr>
+							<td>服务器硬盘类型:</td>
+							<td><input class="easyui-validatebox" type="text"
+								name="disk" id="disk" style="width: 180px;"
+								data-options="required:true" placeholder="请输入服务器硬盘"></input></td>
+							<td>备注信息:</td>
+							<td><input class="easyui-validatebox" type="text"
+								name="comment" id="comment" style="width: 180px;" placeholder="请输入服务器备注"></input></td>
+						</tr>
+						<tr>
+							<td>项目标签:</td>
+							<td><input id="proTag" name="proTag" type="text" style="width: 180px; "placeholder="请输入对应的醒目标签"/>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>请输入ip信息:</td>
+							<td colspan="2" id="ipTypePlace">
+								<input type="button" value="增加" id="addIpType"/>
+								<span>先选择网络类型 再输入IP地址！</span>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>请输入应用服务信息:</td>
+							<td colspan="2" id="appPlace">
+								<input type="button" value="增加" id="addApp"/>
+								<span>先选择应用类型 再输入路径地址！</span>
+							</td>
+						</tr>
+						
+					</table>
+			</form>
+		</div>
+		<div style="text-align: center; padding: 5px">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				onclick="submitForm()">提交</a>
+		</div>
+	</div>
+	<script>
+		function submitForm() {
+			
+			if ($("#ff").form('validate')) {
+				//捕获ip类型数组
+				var ipArry = [];
+				$.each($("#ipTypePlace div"), function(index, val) {
+					ipArry.push($(this).find("[flag='netType']").val() + "&" 
+							+ $(this).find("[flag='ipAddress']").val());
+				});
+				//捕获app信息数组
+				var appArry = [];
+				$.each($("#appPlace div"), function(index, val) {
+					appArry.push($(this).find("[flag='appType']").val() + "&" 
+							+ $(this).find("[flag='appPath']").val());
+				});
+				
+				
+					var phyServerId = $("#phyServerIdVal option:selected").val();
+				
+				
+				var options = {
+					dataType : 'json',
+					type : 'post',
+					url : config.baseURL + 'virServer/add.json',
+					data : {
+						"phyServerId" : phyServerId,
+						ipArry : ipArry.join(","),
+						appArry : appArry.join(",")
+					},
+					success : function(data) {
+						parent.$('#win').window('close');
+						location.href = config.baseURL+ 'pages/virServer/virServerList.html';
+						parent.searchVirServer();
+					},
+					error : function() {
+						$.messager.alert('系统提示', '新增失败!', 'error');
+						return false;
+					}
+				};
+
+				$('#ff').ajaxSubmit(options);
+			}
+		}
+		 
+		$(document).ready(function() {
+			//获取物理服务器全部Id
+			//将数组防止在选择服务器Id上
+			var phyServerIdArr =[];
+			$.ajax({ 
+				dataType : 'json',
+				type : 'post',
+				url : config.baseURL + 'virServer/findPhyServerIp.json',
+				success: function(data){
+					phyServerIdArr = (data.phyServerIdArr);
+					var chooseServerId="";
+					chooseServerId += '<select id = "phyServerIdVal" flag="phyServerIdArr">';
+					for (var i = 0; i < phyServerIdArr.length; i++) {
+						chooseServerId += '<option >'+phyServerIdArr[i]+'</option>';
+					}
+					chooseServerId += '</select>';
+					$("#phyServerId").append(chooseServerId);
+		      }});
+			
+			//添加ip增加事件
+			//计数次数
+			var count = 0;
+			$("#addIpType").click(function() {
+				if(count>=2){
+					alert("最多添加2个网络类型！");
+					return null;
+				}
+				var _html = '<div>';
+				_html += '网络类型:<select flag="netType">';
+				_html += '<option value = "0">内网</option>';
+				_html += '<option value = "1">外网</option>';
+				_html += '</select>';
+				_html += 'IP : <input style="width:100px;" flag="ipAddress"/>';
+				_html += '<input type="button" flag="del" value="删除"/>';
+				_html += '</div>';
+				_html = $(_html);
+				_html.find("[flag='del']").click(function() {
+					$(this).parent().remove();
+				});
+				$("#ipTypePlace").append(_html);
+				count++;
+			});
+			
+			//测试IP抓取是否成功
+			$("#testIp").click(function(){
+				var arry = [];
+				$.each($("#ipTypePlace div"), function(index, val) {
+					arry.push($(this).find("[flag='netType']").val() + "&" 
+							+ $(this).find("[flag='ipAddress']").val());
+				});
+				alert(arry);
+			});
+			
+			//添加ip增加事件
+			//计数次数
+			$("#addApp").click(function() {
+				var _html = '<div>';
+				_html += '应用类型 : <input style="width:100px;" flag="appType"/>';
+				_html += '路径 : <input style="width:100px;" flag="appPath"/>';
+				_html += '<input type="button" flag="del" value="删除"/>';
+				_html += '</div>';
+				_html = $(_html);
+				_html.find("[flag='del']").click(function() {
+					$(this).parent().remove();
+				});
+				$("#appPlace").append(_html);
+			});
+			
+			
+			$("#testApp").click(function(){
+				var arry = [];
+				$.each($("#appPlace div"), function(index, val) {
+					arry.push($(this).find("[flag='appType']").val() + "&" 
+							+ $(this).find("[flag='appPath']").val());
+				});
+				alert(arry);
+			});
+			
+			
+			
+			
+			
+			
+		});
+	</script>
+</body>
+</html>

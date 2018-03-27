@@ -1,0 +1,318 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="/d17-demand-manage/css/zTreeStyle/zTreeStyle.css">
+		<link rel="stylesheet" type="text/css"  href="/d17-demand-manage/css/common.css">
+		
+		<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery-1.8.3.min.js"></script>
+		<script type="text/javascript" src="/d17-demand-manage/easyUi/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery.ztree.all-3.5.min.js"></script>
+		<script type="text/javascript" src="/d17-demand-manage/js/common/config.js"></script>
+		<script type="text/javascript" src="/d17-demand-manage/js/common/utils.js"></script>
+		<script type="text/javascript" src="/d17-demand-manage/js/common/common.js"></script>
+	</head>
+	
+	<body>
+		<div data-options="closable:true" class="listPage">
+			
+			<div class="easyui-panel" type="panel" style="padding: 5px;height: 100%;">
+				<div class="easyui-layout" data-options="fit:true">
+					<div title="权限信息列表" data-options="region:'center'" type="panel" >
+						<table id="dataGridPriv" type="dataGrid" data-options="toolbar:'#toolBar'" style="height: 100%"> </table>
+						<div id="toolBar" style="padding: 5px; height: auto">
+							<div style="margin-bottom: 5px">
+								<table cellspacing="0" cellpadding="0">
+									<tr>
+										<td><a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newPriv();">增加</a></td>
+										<td>
+											<div class="datagrid-btn-separator"></div>
+										</td>
+										<td><a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editPriv();">编辑</a></td>
+										<td>
+											<div class="datagrid-btn-separator"></div>
+										</td>
+										<td><a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyPriv();">删除</a></td>
+									</tr>
+								</table>
+							</div>
+							<div>
+								权限名称: <input class="easyui-input" style="width: 80px" id="name" name="name"> 
+								<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" onclick="searchList();">查询</a>
+							</div>
+						</div>
+					</div>
+		
+					<div title="配置菜单" data-options="region:'east',split:true"  style="width: 250px;"  class="easyui-layout" type="panel">
+						<div class="left"  style="height: 90%;border:1px solid #95B8E7">
+							<ul id="menuTree" class="ztree"></ul>
+						</div>
+						
+						<div>
+							<div style="text-align: center; padding: 4%">
+								<a href="javascript:void(0);" class="easyui-linkbutton"   iconCls="icon-ok" onclick="submit();">提交修改</a>
+							</div>
+						</div>
+					</div>
+		
+					<div id="win"></div>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			var checkData = [];
+			
+			$('#dataGridPriv').datagrid({
+				rownumbers : true,
+				pagination : true,
+				fitColumns:true,
+				url : config.baseURL + 'priv/getPrivList.json',
+				loadMsg : '数据装载中......',
+				singleSelect : true,
+				queryParams : {
+					"name" : $("#name").val()
+				},
+				columns : [ [ {
+					field : 'id',
+					title : '主键',
+					align : 'center',
+					hidden : true,
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'name',
+					title : '权限名称',
+					width : 200,
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'comments',
+					title : '备注',
+					fitColumns : true,
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				} ] ],
+				onSelect : function(rowIndex, rowData) {
+					refreshTree();
+				},
+				onLoadSuccess : function(data) {
+					refreshTree();
+				}
+			});
+			//设置分页控件  
+			var p = $('#dataGridPriv').datagrid('getPager');
+			$(p).pagination({
+				pageSize : 10,//每页显示的记录条数，默认为10  
+				pageList : [ 5, 10, 15 ],//可以设置每页记录条数的列表  
+				beforePageText : '第',//页数文本框前显示的汉字  
+				afterPageText : '页    共 {pages} 页',
+				displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录'
+			});
+		
+			function newPriv() {
+				var content = '<iframe  frameborder="0"  src="/d17-demand-manage/pages/priv/add.html" style="width:100%;height:100%;"></iframe>';
+		
+				$('#win').window({
+					title : '新增',
+					width : 600,
+					height : 195,
+					modal : true,
+					collapsible : false
+				}).window('center').html(content);
+			}
+		
+			function editPriv() {
+				var row = $('#dataGridPriv').datagrid('getSelected');
+				if (row) {
+					var content = '<iframe  frameborder="0"  src="/d17-demand-manage/pages/priv/edit.html" style="width:100%;height:100%;"></iframe>';
+					content = content + '<input type="hidden" id="privId" name="privId" value="'+row.id+'">';
+					$('#win').window({
+						title : '修改',
+						width : 600,
+						height : 195,
+						modal : true,
+						collapsible : false
+					}).window('center').html(content);
+				} else {
+					$.messager.alert('系统提示', '请选择一行!', 'warning');
+				}
+			}
+		
+			function destroyPriv() {
+				var row = $('#dataGridPriv').datagrid('getSelected');
+				if (row) {
+					$.messager.confirm('系统提示', '您是否要删除当前选中的权限？', function(data) {
+						if (data) {
+							$.ajax({
+								type : "POST",
+								url : config.baseURL + 'priv/delete.json',
+								dataType : "json",
+								data : {
+									"privId" : row.id
+								},
+								success : function(data) {
+									$.messager.alert('系统提示', '删除成功', 'info');
+									searchList();
+								},
+								error : function() {
+									$.messager.alert('系统提示', '删除失败', 'error');
+								}
+							});
+						}
+					})
+				} else {
+					$.messager.alert('系统提示', '请选择一行!', 'warning');
+				}
+			}
+		
+			function searchList() {
+				var queryParams = $('#dataGridPriv').datagrid('options').queryParams;
+				queryParams.name = $("#name").val();
+				$('#dataGridPriv').datagrid('reload');
+			}
+		
+			var setting = {
+				async : {
+					enable : true,
+					url : config.baseURL + "menu/ztree/find/check.json",
+					autoParam : [ "id=pid" ],
+					dataFilter : zTreefilter,
+					type : "get"
+				},
+				check : {
+					enable : true,
+					chkStyle : "checkbox"
+				},
+				view : {
+					dblClickExpand : false,
+					selectedMulti : true
+				},
+				callback : {
+					onAsyncSuccess : zTreeOnAsyncSuccess
+				}
+			};
+		
+			function zTreeOnClick(event, treeId, treeNode) {
+				var zTree = $.fn.zTree.getZTreeObj(treeId);
+				if (treeNode.isParent) {
+					zTree.expandNode(treeNode);
+				} else {
+					zTree.checkNode(treeNode);
+				}
+			}
+		
+			function zTreefilter(treeId, parentNode, childNodes) {
+				childNodes = childNodes.list;
+				if (!childNodes) {
+					return null;
+				} else {
+					var zTree = $.fn.zTree.getZTreeObj(treeId);
+					$.each(childNodes, function(i, node) {
+						if (node.name) {
+							node.name = node.name.replace(/\.n/g, '.');
+							node.checked = false;
+							$.each(checkData, function(index, value) {
+							    if (value ==node.id) {
+							    	node.checked = true;
+							    }
+						    });
+						}
+					});
+					
+					return childNodes;
+				}
+			}
+		
+			function zTreeOnAsyncSuccess(event, treeId, treeNode, msg) {
+		
+				var zTree = $.fn.zTree.getZTreeObj(treeId);
+				expandNodes(zTree.getNodes());
+			}
+			
+			function expandNodes(nodes) {
+				if (!nodes) return;
+				var zTree = $.fn.zTree.getZTreeObj("menuTree");
+				for (var i=0, l=nodes.length; i<l; i++) {
+					zTree.expandNode(nodes[i], true, false, false);
+					if (nodes[i].isParent && nodes[i].zAsync) {
+						expandNodes(nodes[i].children);
+					}
+				}
+			}
+			
+			function refreshTree() {
+				
+				checkData = [];
+				var row = $('#dataGridPriv').datagrid('getSelected');
+				if (row) {
+					$.ajax({
+				        type: "POST",
+				        url: config.baseURL + "menu/findByPrivId.json",
+				        dataType: "json",
+						cache : false,
+				        data : {
+				            "privId" : row.id
+				        },
+				        success: function(data){ 
+				        	$.each(data.list, function(index, value) {
+				        		checkData.push(value.id);
+				            });
+				        	var treeObj = $.fn.zTree.getZTreeObj("menuTree");
+							treeObj.reAsyncChildNodes(null, "refresh");
+				        },
+				        error : function() {
+				        	$.messager.alert('系统提示', '数据加载失败', 'error');
+				        }
+				    });
+				} else {
+					$.fn.zTree.init($("#menuTree"), setting);
+				}
+			}
+		
+			function submit() {
+				var row = $('#dataGridPriv').datagrid('getSelected');
+				if (row) {
+					$.messager.confirm('系统提示', '确定提交菜单权限修改吗？', function(data) {
+						if (data) {
+							var menuIds = [];
+							$.each($.fn.zTree.getZTreeObj("menuTree").getCheckedNodes(true), function(index, value) {
+								menuIds.push(value.id);
+						    });
+							
+							$.ajax({
+						        type: "POST",
+						        url: config.baseURL + "priv/changePrivMenu.json",
+						        dataType: "json",
+						        data : {
+						        	"privId" : row.id,
+									"menuIds" : menuIds.join(",")
+						        },
+						        success: function(data){
+						        	refreshTree();
+						        	$.messager.alert('系统提示', '修改成功', 'info');
+						        },
+						        error : function() { 
+						        	refreshTree();
+						        	$.messager.alert('系统提示', '修改失败', 'error');
+						        }
+						    });
+						}
+					})
+				} else {
+					$.messager.alert('系统提示', '您还未选择权限!', 'warning');
+				}
+			}
+		
+			$(document).ready(function() {
+				$(window).resize();
+			});
+		</script>
+	</body>
+</html>	

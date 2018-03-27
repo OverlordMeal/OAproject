@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cloud.manage.dao.PhyServerDao">
+
+	 <select id="findPage" resultType="org.cloud.manage.model.PhyServer"
+		parameterType="org.cloud.manage.model.vo.PhyServerQuery">
+		SELECT
+		a.*,b.server_eth,b.switches_id,b.switches_eth
+		FROM t_phy_server a
+		INNER
+		JOIN t_phy_server_switches_link b ON
+		a.id=b.server_id
+		<where>
+			<if test="query.serverModel != null">
+				AND a.server_model like
+				CONCAT('%',CONCAT(#{query.serverModel},'%'))
+			</if>
+		</where>
+	</select>
+
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert
+		into t_phy_server
+		(ip_address,
+		online_time,
+		server_model,
+		memory,
+		cpu,
+		ethernets,
+		comment
+		)
+		values
+		(#{ipAddress},
+		#{onlineTime},
+		#{serverModel},
+		#{memory},
+		#{cpu},
+		#{ethernets},
+		#{comment})
+	</insert>
+
+
+	<insert id="insertLink" parameterType="org.cloud.manage.model.vo.LinkQuery">
+		insert into t_phy_server_switches_link
+		(
+		server_id,
+		server_eth,
+		switches_id,
+		switches_eth
+		)
+		values
+		(
+		#{serverId},
+		#{serverEth},
+		#{switchesId},
+		#{switchesEth}
+		)
+	</insert>
+
+
+	<!-- 按ID和使用端口进行查询 -->
+	<select id="findById" resultType="org.cloud.manage.model.PhyServer"
+		parameterType="org.cloud.manage.model.vo.PhyServerQuery">
+		select * from t_phy_server a where id = #{id}
+	</select>
+	
+	<select id="findServerById" resultType="org.cloud.manage.model.PhyServer"
+		parameterType="org.cloud.manage.model.vo.PhyServerQuery">
+		SELECT * from t_phy_server where id=#{id} 
+	</select>
+	
+	
+	
+
+	<update id="updateServer" parameterType="org.cloud.manage.model.vo.PhyServerQuery">
+		update t_phy_server
+		set
+		ip_address = #{ipAddress},
+		online_time = #{onlineTime} ,
+		server_model = #{serverModel},
+		memory = #{memory},
+		cpu = #{cpu},
+		ethernets = #{ethernets},
+		comment = #{comment}
+		where id = #{id}
+	</update>
+
+
+
+
+
+
+	<delete id="deletePhyServer" parameterType="Long">
+		delete from t_phy_server where id = #{id}
+	</delete>
+
+	<delete id="deleteServerLink" parameterType="Long">
+		delete from t_phy_server_switches_link where server_id = #{serverId}
+	</delete>
+	
+	
+	
+	
+	<select id = "findServerPage" parameterType="org.cloud.manage.model.vo.PhyServerQuery" 
+	resultType="org.cloud.manage.model.PhyServer">
+	select * from t_phy_server a 
+			<if test="query.serverModel != null">
+			<where>
+				AND a.server_model like CONCAT('%',CONCAT(#{query.serverModel},'%'))
+			</where>
+			</if>
+	
+	</select>
+	
+	<select id = "findLinkList" parameterType="Long" resultType="org.cloud.manage.model.Link">
+	select a.server_eth,a.switches_id,a.switches_eth from t_phy_server_switches_link a where server_id = #{id}
+	</select>
+	
+	<select id="findSwitchesId" resultType="Integer">
+	select a.id from t_switches a
+	</select>
+	<select id="findSwitchesModel" resultType="String">
+	select a.switches_model from t_switches a
+	</select>
+	
+	
+	
+	
+
+
+</mapper>

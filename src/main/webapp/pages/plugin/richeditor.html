@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>富文本</title>
+<script type="text/javascript" src="/d17-demand-manage/plugin/richeditor/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/plugin/richeditor/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/plugin/richeditor/js/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/js/common/config.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/plugin/richeditor/kindeditor/kindeditor.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/plugin/richeditor/js/richeditorConfig.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/plugin/richeditor/js/richeditor.js"></script>
+<script>
+	$(document).ready(function(e) {
+		richeditor.init("detail", "", function(data) {
+			var file = data.fileList[0];
+			return {error : 0, url : "/d17-demand-manage/" + file.fileRelative};
+		},function() {
+			alert('编辑结束:' + $("#detail").val());
+		});
+	});
+</script>
+</head>
+
+<body>
+	<textarea name="detail" id="detail"></textarea>
+</body>
+
+</html>

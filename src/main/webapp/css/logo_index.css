@@ -1,0 +1,26 @@
+@charset "utf-8";
+/* CSS Document */
+
+.login{
+	margin:0 auto;
+	width:100%;
+}
+.index_jia{
+	position:absolute;
+	background:url(../images/index_bg_02.png) repeat-x;
+	width:100%;
+	height:100px;
+}
+.logo_index{
+	position:absolute;
+	background:url(../images/index_bg.gif) no-repeat;
+	height:100px;
+	width:100%;
+}
+.logo_index_l{
+	background:url(../images/logo_index.png) no-repeat;
+	height:75px;
+	margin-top:7px;
+	margin-left:15px;
+	width: relative;
+}

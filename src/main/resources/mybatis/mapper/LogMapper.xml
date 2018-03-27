@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cloud.manage.dao.LogDao">
+	
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into t_log
+		  (user_id, user_name, ip, type, remark, create_date)
+		values
+		  (#{userId}, #{userName}, #{ip}, #{type}, #{remark}, #{createDate})
+	</insert>
+	
+	<select id="findPage" resultType="org.cloud.manage.model.Log" parameterType="org.cloud.manage.model.vo.LogQuery">
+		select * from t_log t 
+		<where>
+			<if test="query.type != null ">  
+				AND t.type = #{query.type}
+			</if>
+			<if test="query.createDateStart != null ">  
+				AND t.create_date >= #{query.createDateStart}
+			</if>
+			<if test="query.createDateEnd != null ">  
+				AND t.create_date &lt;= #{query.createDateEnd}
+			</if>
+		</where> 
+		
+		<if test="query.orderByField != null">
+			order by ${query.orderByField}
+		</if>
+	</select>
+	
+</mapper>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	
+	<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/icon.css">
+	<link rel="stylesheet" type="text/css"  href="/d17-demand-manage/css/zTreeStyle/zTreeStyle.css">
+		
+	<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/easyUi/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/common/config.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/common/common.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/selectTree.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery.ztree.all-3.5.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery.form.js"></script>
+
+</head>
+<body>
+	<div style="margin:10px 0;"></div>
+	<div class="easyui-panel" >
+		<div style="padding-bottom: 10px; padding-top: 10px;">
+	    <form id="ff" method="post">
+	    <input type="hidden" id="id" name="id">
+	    <input type="hidden" id="superId" name="superId">
+	    	<table style="margin: auto;">
+	    				<tr>
+							<td>交换机类型名称:</td>
+							<td><input class="easyui-validatebox" type="text" name="switchesModel" id="switchesModel" style="width: 180px;" data-options="required:true"></input></td>
+						</tr>
+						<tr>
+							<td>交换机层次id序号:</td>
+							<td><input class="easyui-validatebox" type="text"
+								name="switchesId" id="switchesId" style="width: 180px;"
+								data-options="required:true"></input></td>
+						</tr>
+						<tr>
+							<td>交换机的接口数量:</td>
+							<td><input class="easyui-validatebox" type="text"
+								name="switchesInterface" id="switchesInterface"
+								style="width: 180px;"></input></td>
+						</tr>
+						<tr>
+							<td>网络类型:</td>
+							<td><select class="easyui-combobox" name="netType"
+								id="netType" editable="false" panelHeight="auto"
+								style="width: 184px;">
+									<option value="inner_net" selected="selected">内网</option>
+									<option value="outter_net">外网</option>
+							</select></td>
+						</tr>
+	    	</table>
+	    </form>
+	    </div>
+	    <div style="text-align:center;padding:5px">
+	    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">提交</a>
+	    </div>
+	</div>
+	<script>
+		
+		function submitForm() {
+			
+			if ($("#ff").form('validate')) {
+				var options = {
+						dataType : 'json',
+						type : 'post',
+						url : config.baseURL + 'switches/update.json',
+						success : function(data) {
+							parent.$('#win').window('close');
+							location.href = config.baseURL + 'pages/switches/switchesList.html';
+							parent.searchList();
+						},
+				        error : function() {
+				        	$.messager.alert('系统提示', '修改失败!', 'error');
+							return false;
+				        }
+					};
+
+					$('#ff').ajaxSubmit(options);
+			}
+		}
+		
+		$(document).ready(function() {
+			
+			$.ajax({
+		        type: "POST",
+		        url: config.baseURL + "switches/edit.json",
+		        dataType: "json",
+		        data : {
+		            "id" : parent.$('#id').val()
+		        },
+		        success: function(data){
+		        	var bean = data.bean;
+		        	
+		        	$("#id").val(bean.id);
+		        	$("#switchesId").val(bean.switchesId);
+		        	$("#switchesModel").val(bean.switchesModel);
+		        	$("#switchesInterface").val(bean.switchesInterface);
+
+		        	if (bean.netType === "inner_net") {
+			        	$("#netType").combobox('setValue', '内网');   
+		        	} else {
+		        		$("#netType").combobox('setValue', '外网');   
+		        	}
+		        	
+		        },
+		        error : function() { 
+		        	$.messager.alert('系统提示', '数据获取失败!', 'error');
+		        }
+		    });
+			
+			$("#superName").click(function(event) {
+				selectTree.initMenuRadio("superName", function(ids, names) {
+					$("#superName").val(names);
+					$("#superId").val(ids);
+				});
+			});
+		});
+	</script>
+</body>
+</html>

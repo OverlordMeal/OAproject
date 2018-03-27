@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	
+	<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/icon.css">
+	<link rel="stylesheet" type="text/css"  href="/d17-demand-manage/css/zTreeStyle/zTreeStyle.css">
+		
+	<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/easyUi/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/common/config.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/common/common.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/selectTree.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery.ztree.all-3.5.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery.form.js"></script>
+
+</head>
+<body>
+	<div style="margin:10px 0;"></div>
+	<div class="easyui-panel" >
+		<div style="padding-bottom: 10px; padding-top: 10px;">
+	    <form id="ff" method="post">
+	    <input type="hidden" id="id" name="id">
+	    <input type="hidden" id="superId" name="superId">
+	    	<table style="margin: auto;">
+	    		<tr>
+	    			<td>菜单名称:</td>
+	    			<td><input class="easyui-validatebox" type="text" name="name"  id="name"  style="width: 180px;" data-options="required:true" ></input></td>
+					<td>菜单对应的URL:</td>
+	    			<td><input  type="text" name="url" id="url" style="width: 180px;"></input></td>
+	    		</tr>
+	    		<tr>
+    				<td>父菜单:</td>
+	    			<td><input class="easyui-validatebox" type="text" name="superName" id="superName"  data-options="required:true" onkeypress="javascript:return false" style="width: 180px;"></input></td>
+	    			<td>是否有子菜单:</td>
+	    			<td>
+    					<select class="easyui-combobox" name="hasChild" id="hasChild" editable="false" panelHeight="auto" style="width: 184px;">
+	    					<option value="1"  selected="selected">是</option>
+	    					<option value="0">否</option>
+    					</select>
+    				</td>
+	    		</tr>
+	    		<tr>
+	    			<td>排序:</td>
+	    			<td colspan="3"><input class="easyui-numberbox" type="text" name="seq"  id="seq"  style="width: 460px;" data-options="required:true" ></input></td>
+	    		</tr>
+	    		<tr>
+	    			<td>备注:</td>
+	    			<td colspan="3"><textarea type="text" name="comments" id="comments" style="width: 454px;;"></textarea></td>
+	    		</tr>
+	    	</table>
+	    </form>
+	    </div>
+	    <div style="text-align:center;padding:5px">
+	    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">提交</a>
+	    </div>
+	</div>
+	<script>
+		
+		function submitForm() {
+			
+			if ($("#ff").form('validate')) {
+				var options = {
+						dataType : 'json',
+						type : 'post',
+						url : config.baseURL + 'menu/update.json',
+						success : function(data) {
+							parent.$('#win').window('close');
+							location.href = config.baseURL + 'pages/menu/menuList.html';
+							parent.searchList();
+						},
+				        error : function() {
+				        	$.messager.alert('系统提示', '修改失败!', 'error');
+							return false;
+				        }
+					};
+
+					$('#ff').ajaxSubmit(options);
+			}
+		}
+		
+		$(document).ready(function() {
+			
+			$.ajax({
+		        type: "POST",
+		        url: config.baseURL + "menu/edit.json",
+		        dataType: "json",
+		        data : {
+		            "id" : parent.$('#id').val()
+		        },
+		        success: function(data){
+		        	var bean = data.bean;
+		        	
+		        	$("#id").val(bean.id);
+		        	$("#superId").val(bean.superId);
+		        	$("#name").val(bean.name).validatebox('validate');
+		        	$("#url").val(bean.url);
+		        	$("#superName").val(bean.superName).validatebox('validate');
+		        	$("#hasChild").val(bean.hasChild);
+		        	$('#seq').numberbox('setValue',bean.seq);
+
+		        	if (bean.hasChild) {
+			        	$("#hasChild").combobox('setValue', '1');   
+		        	} else {
+		        		$("#hasChild").combobox('setValue', '0');   
+		        	}
+		        	
+		        	$("#comments").val(bean.comments);
+		        },
+		        error : function() { 
+		        	$.messager.alert('系统提示', '数据获取失败!', 'error');
+		        }
+		    });
+			
+			$("#superName").click(function(event) {
+				selectTree.initMenuRadio("superName", function(ids, names) {
+					$("#superName").val(names);
+					$("#superId").val(ids);
+				});
+			});
+		});
+	</script>
+</body>
+</html>

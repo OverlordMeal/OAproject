@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cloud.manage.dao.RoleDao">
+	
+	<select id="findList" parameterType="org.cloud.manage.model.vo.RoleQuery" resultType="org.cloud.manage.model.Role">
+		select t.* from t_role t 
+		<where>
+			<if test="name != null ">  
+				AND t.name like CONCAT('%',CONCAT(#{name},'%'))
+			</if>
+		</where> 
+		
+		<if test="orderByField != null">
+			order by ${orderByField}
+		</if>
+	</select>
+	
+	<select id="findPage" parameterType="org.cloud.manage.model.vo.RoleQuery" resultType="org.cloud.manage.model.Role">
+		select t.* from t_role t 
+		<where>
+			<if test="query.name != null ">  
+				AND t.name like CONCAT('%',CONCAT(#{query.name},'%'))
+			</if>
+		</where> 
+		
+		<if test="query.orderByField != null">
+			order by ${query.orderByField}
+		</if>
+	</select>
+	
+	<insert id="add" useGeneratedKeys="true" keyProperty="id">
+		insert into t_role(name, comments) values(#{name}, #{comments})
+	</insert>
+	
+	<insert id="addRolePriv">
+		insert into t_role_priv
+		  (role_id, priv_id)
+		values
+		<foreach collection="privIds" item="privId" index="index" separator="," > 
+	      (#{roleId}, #{privId})
+	    </foreach> 
+	</insert>
+	
+	<delete id="remove" parameterType="long">
+		delete from t_role where id = #{id}
+	</delete>
+	
+	<delete id="removeRolePrivByRoleId" parameterType="long">
+		delete from t_role_priv where role_id = #{roleId}
+	</delete>
+	
+	<select id="findById" parameterType="long" resultType="org.cloud.manage.model.Role">
+		select t.* from t_role t where t.id = #{id}
+	</select>
+	
+	<update id="update" parameterType="org.cloud.manage.model.Role">
+		update t_role t set t.name = #{name}, t.comments = #{comments} where t.id = #{id}
+	</update>
+	
+	<select id="findByUserId" parameterType="long" resultType="org.cloud.manage.model.Role">
+		select b.* from t_user_role a, t_role b where a.role_id = b.id and a.user_id = #{userId}
+	</select>
+</mapper>

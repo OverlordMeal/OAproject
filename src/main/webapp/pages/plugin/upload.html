@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>产品发布</title>
+	<link type="text/css" rel="stylesheet" href="/d17-demand-manage/plugin/upload/css/popUp.css" />
+	<link type="text/css" rel="stylesheet"  href="/d17-demand-manage/plugin/upload/css/upload.css"/>
+	
+	<script type="text/javascript" src="/d17-demand-manage/plugin/upload/js/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/plugin/upload/js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/plugin/upload/js/jquery.fileupload.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/common/config.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/plugin/upload/js/uploadConfig.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/plugin/upload/js/popUp.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/plugin/upload/js/upload.js"></script>
+	<script>
+		$(document).ready(function(e) {
+			upload.upload(
+				$("#uploadImgBtn"), 
+				null,
+				function(data) {
+					var file = data.fileList[0];
+					var fileUrl = "/d17-demand-manage/" + file.fileRelative;
+					var img = $("#uploadImg");
+					img.attr("src", fileUrl);
+					img.attr("filePath", file.fileRelative);
+				}, 
+				upload.commonCheckUploadFile
+			);
+		});
+		
+	</script>
+</head>
+<body>
+	<img id="uploadImg" src="" width="120" height="120" />
+	<input type="file" id="uploadImgBtn"></input>
+</body>
+</html>

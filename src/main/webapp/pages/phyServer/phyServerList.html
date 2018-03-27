@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<link rel="stylesheet" type="text/css"
+	href="/d17-demand-manage/easyUi/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css"
+		href="/d17-demand-manage/easyUi/themes/icon.css">
+		<link rel="stylesheet" type="text/css"
+			href="/d17-demand-manage/css/zTreeStyle/zTreeStyle.css">
+			<link rel="stylesheet" type="text/css"
+				href="/d17-demand-manage/css/common.css">
+
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/jquery/jquery-1.8.3.min.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/easyUi/jquery.easyui.min.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/common/config.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/common/utils.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/common/common.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/jquery/jquery.ztree.all-3.5.min.js"></script>
+				<script type="text/javascript"
+					src="/d17-demand-manage/js/selectTree.js"></script>
+</head>
+
+<body>
+	<div data-options="closable:true" class="listPage">
+		<div class="easyui-panel" type="panel"
+			style="padding: 5px; height: 100%;">
+			<table id="dataGridPhyServer" type="dataGrid"
+				data-options="toolbar:'#toolBar'" style="height: 100%">
+			</table>
+			<div id="toolBar" style="padding: 5px; height: auto">
+				<div style="margin-bottom: 5px">
+					<table cellspacing="0" cellpadding="0">
+						<tr>
+							<td><a href="javascript:void(0);" class="easyui-linkbutton"
+								iconCls="icon-add" plain="true" onclick="newPhyServer();">增加服务器信息</a></td>
+							<td>
+								<div class="datagrid-btn-separator"></div>
+							</td>
+							<td><a href="javascript:void(0);" class="easyui-linkbutton"
+								iconCls="icon-edit" plain="true" onclick="editPhyServer();">编辑信息</a></td>
+							<td>
+								<div class="datagrid-btn-separator"></div>
+							</td>
+							<td><a href="javascript:void(0);" class="easyui-linkbutton"
+								iconCls="icon-remove" plain="true" onclick="destoryPhyServer();">删除服务器信息</a></td>
+						</tr>
+					</table>
+				</div>
+				<div>
+					物理服务器名称: <input class="easyui-input" style="width: 80px" id="serverModel" name="serverModel"> 
+					物理服务器接口数量: <input class="easyui-input" style="width: 80px" id="ethernets"name="ethernets">
+					
+					<a href="javascript:void(0);"
+							class="easyui-linkbutton" iconCls="icon-search"
+							onclick="searchList();">查询</a>
+				</div>
+			</div>
+
+			<div id="win"></div>
+
+		</div>
+	</div>
+
+	<script type="text/javascript">
+			var lastIndex;
+		
+			$('#dataGridPhyServer').datagrid({
+				rownumbers : true,
+				title : '物理服务器信息列表',
+				pagination : true,//分页控件  
+				singleSelect : true,
+				url : config.baseURL + '/phyServer/getPhyServerList.json',
+				loadMsg : '数据装载中......',
+				fitColumns:true,
+				queryParams : {
+					"ipAddress" : $("#ipAddress").val(),
+					"ethernets" : $("#ethernets").val(),
+					"serverModel" : $("#serverModel").val(),
+					"cpu" : $("#cpu").val(),
+					"memory" : $("#memory").val(),
+					"comment" : $("#comment").val(),
+					"serverEth" : $("#serverEth").val(),
+					"switchesId" : $("#switchesId").val(),
+					"switchesEth" : $("#switchesEth").val()
+					
+				},
+				columns : [ [ {
+					field : 'id',
+					title : '服务器标识ID',
+					align : 'center',
+					hidden : false,
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'ipAddress',
+					title : '物理服务器地址',
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}, {	
+					field : "cpu" ,
+					title : '内核型号',
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				},{	
+					field : "memory" ,
+					title : '内存',
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				},{
+					field : 'serverModel',
+					title : '物理服务器名称',
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				},{	
+					field : "linkToStr" ,
+					title : '连接关系',
+					width : 200,
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'ethernets',
+					title : '物理服务器接口数',
+					fitColumns : true,
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'onlineTimeStr',
+					title : '服务器上线时间',
+					fitColumns : true,
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'switchesId',
+					title : '使用的叫交换机号',
+					align : 'center',
+					hidden : true,
+					editor : {
+						type : 'text'
+					}
+				
+				}/* {
+					field : 'netType',
+					title : '内外网',
+					hidden:true,
+					fitColumns : true,
+					align : 'center',
+					editor : {
+						type : 'text'
+					},
+					formatter : function(value,	) {
+						if (value == 'inner_net') {
+							return "内网";
+						} else {
+							return "外网";
+						}
+					}
+				} */
+				 ] ]
+			});
+			//设置分页控件  
+			var p = $('#dataGridPhyServer').datagrid('getPager');
+			$(p).pagination({
+				pageSize : 10,//每页显示的记录条数，默认为10  
+				pageList : [ 5, 10, 15 ],//可以设置每页记录条数的列表  
+				beforePageText : '第',//页数文本框前显示的汉字  
+				afterPageText : '页    共 {pages} 页',
+				displayMsg : '当前显示 {from} - {to} 条记录   共 {total} 条记录'
+			});
+		
+			function newPhyServer() {
+				var _html = '';
+				var content = '<iframe  frameborder="0"  src="/d17-demand-manage/pages/phyServer/add.html" style="width:100%;height:100%;"></iframe>';
+		
+				$('#win').window({
+					title : '新增',
+					width : 650,
+					height : 300,
+					modal : true,
+					collapsible : false
+				}).window('center').html(content);
+			}
+			function editPhyServer() {
+				var row = $('#dataGridPhyServer').datagrid('getSelected');
+				if (row) {
+					var _html = '';
+					var content = '<iframe  frameborder="0"  src="/d17-demand-manage/pages/phyServer/edit.html" style="width:100%;height:100%;"></iframe>';
+					content = content + '<input type="hidden" id="id" name="id" value="'+row.id+'">';
+					content = content + '<input type="hidden" id="switchesId" name="switchesId" value="'+row.switchesId+'">';
+					$('#win').window({
+						title : '修改',
+						width : 700,
+						height : 400,
+						modal : true,
+						collapsible : false
+					}).window('center').html(content);
+				} else {
+					$.messager.alert('系统提示', '请选择一行!', 'warning');
+				}
+			}
+			function searchList() {
+				var queryParams = $('#dataGridPhyServer').datagrid('options').queryParams;
+				queryParams.ipAddress = $("#ipAddress").val();
+				queryParams.ethernets = $("#ethernets").val();
+				queryParams.serverModel = $("#serverModel").val();
+				$('#dataGridPhyServer').datagrid('reload');
+			}
+			
+			function destoryPhyServer() {
+				var row = $('#dataGridPhyServer').datagrid('getSelected');
+				console.log(row);
+				if (row) {
+					alert
+					
+					$.messager.confirm('系统提示', '您是否要删除当前选中的服务器吗？', function(data) {
+						if (data) {
+							$.ajax({
+								type : "POST",
+								async : false,
+								url : config.baseURL + 'phyServer/deleteServer.json',
+								dataType : "json",
+								data : {
+									"id" : row.id,
+								},
+								success : function(data) {
+									searchList();
+								},
+								error : function() {
+										$.messager.alert('系统提示', '删除失败', 'error');
+								}
+							});
+						}
+					})
+				} else {
+					$.messager.alert('系统提示', '请选择一行!', 'warning');
+				}
+			}
+			function destoryPhyServerLink() {
+				var row = $('#dataGridPhyServer').datagrid('getSelected');
+				console.log(row);
+				if (row) {
+					$.messager.confirm('系统提示', '您是否要删除当前选中连接信息的吗？', function(data) {
+						if (data) {
+							$.ajax({
+								type : "POST",
+								async : false,
+								url : config.baseURL + 'phyServer/deleteLink.json',
+								dataType : "json",
+								data : {
+									"id" : row.id,
+									"switchesId" : row.switchesId,
+								},
+								success : function(data) {
+									searchList();
+								},
+								error : function() {
+										$.messager.alert('系统提示', '删除失败', 'error');
+								}
+							});
+						}
+					})
+				} else {
+					$.messager.alert('系统提示', '请选择一行!', 'warning');
+				}
+			}
+			$(document).ready(function(){
+				
+			});
+		</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cloud.manage.dao.SwitchesDao">
+	
+	<select id="findPage" resultType="org.cloud.manage.model.Switches" parameterType="org.cloud.manage.model.vo.SwitchesQuery">
+		select 	*  from t_switches t
+		<where>
+			<if test="query.switchesModel != null">
+				AND t.switches_model like CONCAT('%',CONCAT(#{query.switchesModel},'%'))
+			</if>
+			<if test="query.netType != null">
+				AND t.net_type = #{query.netType}
+			</if>
+			<if test="query.switchesInterface != null">
+				AND t.switches_interface = #{query.switchesInterface}
+			</if>
+		</where>
+	</select>
+	<!--增加交换机信息  -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		insert into t_switches
+		(switches_id,switches_model,switches_interface,net_type)
+		values
+		(#{switchesId},#{switchesModel},#{switchesInterface},#{netType})
+	</insert>
+		<!--删除交换机信息  -->
+	<delete id="delete" parameterType="Integer">
+		delete from t_switches where id = #{id}
+	</delete>
+	<!--修改交换机信息  -->
+	<update id="update" >
+		update t_switches
+		   set switches_id = #{switchesId},
+		       switches_model = #{switchesModel},
+		       switches_interface = #{switchesInterface},
+		       net_type = #{netType}
+		 where id = #{id}
+	</update>
+	<!--查询交换机信息  -->
+	<select id="findById" parameterType="Integer" resultType="org.cloud.manage.model.Switches" >
+	 select * from t_switches where id = #{id}
+	</select>
+	
+	<select id = "getAllSwitches" resultType="org.cloud.manage.model.Switches">
+			select * from t_switches t
+	</select>
+</mapper>

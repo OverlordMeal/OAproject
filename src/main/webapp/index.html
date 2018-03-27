@@ -1,0 +1,246 @@
+﻿	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta charset="UTF-8">
+<title>后台管理系统</title>
+<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="/d17-demand-manage/css/logo_index.css">
+<link rel="stylesheet" type="text/css"  href="/d17-demand-manage/css/common.css">
+
+<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/easyUi/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/js/common/config.js"></script>
+<script type="text/javascript" src="/d17-demand-manage/js/common/common.js"></script>
+<style type="text/css">
+html,body {
+	margin: 0px;
+	height: 100%;
+}
+</style>
+
+<script>
+			$(document).ready(function(){
+				getUserNmae();
+
+			  	$('#tabs').tabs('add',{
+			  		title:"首页",
+					content: '<iframe  frameborder="0"  src="' + config.baseURL + 'welcome.html' +'" style="width:100%;" height="99%" ></iframe>',
+					closable: false
+				});
+				
+				  $('#treeId').tree({
+						 animate : true,
+					     lines : true,
+					  	 checkbox: false,   
+		                 url: config.baseURL +  'menu/find.json?pid=1',   
+		                 method : "get",
+		                 onBeforeExpand:function(node,param){  
+		                     $('#treeId').tree('options').url = config.baseURL + "menu/find.json?pid=" + node.id;
+		                 },
+		                 loadFilter: function(data){
+							return data.list;
+		                 },
+		                 onLoadSuccess:function(node,data){
+		                	 var t = $(this);
+		                	 if(data){
+								$(data).each(function(index,d){
+									if(this.state == 'closed'){
+										t.tree('expandAll');
+		                        	}
+								});
+							}
+		                 },
+					    onClick: function(node){
+				    		if($(this).tree('isLeaf', node.target)){
+								var title=node.text;
+							  	if ($('#tabs').tabs('exists', title)){
+									$('#tabs').tabs('select', title);
+							    }else{
+						        	var pageUrl = config.baseURL + node.attributes.url;
+						        	if (pageUrl.indexOf("?") != -1) {
+						        		pageUrl += "&menuId=" +node.id;
+						        	} else {
+						        		pageUrl += "?menuId=" +node.id;
+						        	}
+						        	 var content = '<iframe mid="'+node.id+'" frameborder="0"  src="' + pageUrl +'" style="width:100%;" height="99%" ></iframe>'; 
+						        	 
+								  	$('#tabs').tabs('add',{
+										title:title,
+										content: content,
+										closable: true
+									});
+							  	}
+					    	}else{
+						        $(this).tree('toggle', node.target);
+					    	}
+					    }
+					});
+				  
+				  $('#logout').click(function() {
+					  if (confirm('您确定要退出系统吗?')) {
+						  logout();
+					  }
+				  });
+				  
+				  $('#changePassword').click(function () {
+					  var _html = "<form id='changePasswordForm' method='post'>";
+					  _html += '<table>                ';
+					  _html += '	<tr>                 ';
+					  _html += '		<td>原始密码</td>  ';
+					  _html += '		<td><input type="password" id="orgPassword" class="easyui-validatebox" data-options="required:true"></td>  ';
+					  _html += '	</tr>                ';
+					  _html += '	                     ';
+					  _html += '	<tr>                 ';
+					  _html += '		<td>新密码</td>    ';
+					  _html += '		<td><input type="password"id="newPassword" class="easyui-validatebox" data-options="required:true"></td>  ';
+					  _html += '	</tr>                ';
+					  _html += '	                     ';
+					  _html += '	<tr>                 ';
+					  _html += '		<td>确认新密码</td>';
+					  _html += '		<td><input type="password"id="newPasswordAgain" class="easyui-validatebox" data-options="required:true"></td>  ';
+					  _html += '	</tr>                ';
+					  _html += '	<tr>                 ';
+					  _html += '		<td align="center" colspan="2"><input type="button" value="确认" onclick="changePassword();"></td>  ';
+					  _html += '	</tr>                ';
+					  _html += '</table>               ';
+					  _html += '</form>';
+					  
+					  $('#win').window({
+							title : '修改密码',
+							width : 250,
+							height : 170,
+							modal : true,
+							collapsible : false
+						}).window('center').html(_html);
+					  
+					  $("#orgPassword, #newPassword, #newPasswordAgain").validatebox();
+				  });
+			});
+			
+			function changePassword() {
+				if ($("#changePasswordForm").form('validate')) {
+					var orgPassword = $("#orgPassword").val();
+					var newPassword = $("#newPassword").val();
+					var newPasswordAgain = $("#newPasswordAgain").val();
+					
+					if (newPassword != newPasswordAgain) {
+						alert('两次密码不一致, 请重新输入');
+						return ;
+					}
+					
+					$.ajax({
+				        type: "POST",
+				        url: config.baseURL + "user/changePassword",
+				        dataType: "json",
+				        data : {
+				            "orgPassword" : orgPassword,
+				            "newPassword" : newPassword,
+				            "newPasswordAgain" : newPasswordAgain
+				        },
+				        success: function(data){ //成功(后台不抛异常)后执行
+				        	 if(data.success){
+				        		 alert('密码修改成功,请重新登录');
+				        		 logout();
+				             } else {
+				            	 alert('原始密码不正确,修改失败');
+				             }
+				        },
+				        error : function(XMLHttpRequest, textStatus, errorThrown) { //失败(后台抛出异常)后执行
+				            alert(XmlHttpRequest.responseText);
+				        }
+				    });
+				}
+			}
+			
+			function logout() {
+				
+				$.ajax({
+			        type: "POST",
+			        url: config.baseURL + "user/logout",
+			        dataType: "json",
+			        data : {
+			        },
+			        success: function(data){ //成功(后台不抛异常)后执行
+			        	location.href = data.redirectURL+"?t="+new Date().getTime();
+			        }
+			    });
+			}
+			
+			function getUserNmae() {
+				
+				$.ajax({
+			        type: "POST",
+			        url: config.baseURL + "user/getUserInfo",
+			        dataType: "json",
+			        data : {
+			            
+			        },
+			        success: function(data){ //成功(后台不抛异常)后执行
+			        	$('#userNamePlace').html(data.user.realName);
+			        }
+			    });
+			}
+			
+			function newUser() {
+				$('#win').window({  
+						title:'新增',
+				    width:600,  
+				    height:400,  
+				    modal:true,
+				    collapsible:false
+				}).window('center');  
+			}
+			
+			function editUser() {
+				$('#win').window({  
+						title:'修改',
+				    width:600,  
+				    height:400,  
+				    modal:true,
+				    collapsible:false
+				}).window('center');  
+			}
+			
+			function destroyUser() {
+				var aa = $('dg').datagrid('getSelections');
+				
+				alert(aa);
+			}
+		</script>
+
+</head>
+<body>
+	<div class="easyui-layout" fit="true">
+		<div data-options="region:'north'" style="height:93px">
+        	<div class="index_jia">
+               <div class="logo_index">	
+            	  <div class="logo_index_l"></div>
+            	  <div style="float: right;margin-top: -20px;margin-right: 20px;">
+            	  	欢迎您: <span id="userNamePlace"></span>
+            	  	<!-- <input type="button"  value="修改密码"> -->
+            	  	<a id="changePassword" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-edit" plain="true" >修改密码</a> 
+            	  	<a id="logout" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" >退出</a> 
+            	  	<!-- <input type="button" id="logout" value="退出"> --> 
+            	  </div>
+               </div>
+            </div>
+
+        </div>
+		<div data-options="region:'south',split:true, border:false" style="height: 30px;">copyright</div>
+		<div data-options="region:'west',split:true" title="菜&nbsp;&nbsp;单" style="width: 235px; background:#FFFFFF;">
+			<ul id="treeId" class="easyui-tree"">
+			
+			
+			
+			</ul>
+		</div>
+		<div region="center" data-options="border:false">
+			<div id="tabs" class="easyui-tabs" border="false" fit="true">
+			</div>
+		</div>
+	</div>
+	
+	<div id="win" ></div>
+</body>
+</html>
