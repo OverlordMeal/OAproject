@@ -38,4 +38,9 @@ public interface VirServerDao {
 	
 	//查找出所有的服务器IP信息
 	public List<String> findPhyServerIp();
+	
+	
+	
+	//查找出所有的服务器IP信息
+	public List<String> findPhyServer();
 }
