@@ -3,6 +3,7 @@ package org.cloud.manage.service.impl;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.cloud.lang.BaseUtil;
 import org.cloud.manage.dao.VirServerDao;
 import org.cloud.manage.model.VirServer;
 import org.cloud.manage.model.vo.VirServerQuery;
@@ -36,6 +37,11 @@ public class VirServerServiceImpl implements VirServerService {
 
 	@Override
 	public Long insert(VirServer bean) {
+		if(!BaseUtil.isEmpty(bean.getFlag())){
+			String str = bean.getFlag();
+			String flag = ","+str+",";
+			bean.setFlag(flag);
+		}
 		bean.setIpType(AuthUtil.strToIpJson(bean.getIpType()));
 		bean.setApp(AuthUtil.strToAppJson(bean.getApp()));
 		return dao.insert(bean);
@@ -50,6 +56,11 @@ public class VirServerServiceImpl implements VirServerService {
 
 	@Override
 	public Long update(VirServer bean) {
+		if(!BaseUtil.isEmpty(bean.getFlag())){
+			String str = bean.getFlag();
+			String flag = ","+str+",";
+			bean.setFlag(flag);
+		}
 		bean.setIpType(AuthUtil.strToIpJson(bean.getIpType()));
 		bean.setApp(AuthUtil.strToAppJson(bean.getApp()));
 		dao.update(bean);

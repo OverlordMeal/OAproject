@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.cloud.interceptor.annotation.NeedLogin;
+import org.cloud.lang.BaseUtil;
 import org.cloud.manage.model.VirServer;
 import org.cloud.manage.model.vo.PhyServerQuery;
 import org.cloud.manage.model.vo.VirServerQuery;
@@ -48,6 +49,7 @@ public class VirServerController {
 		query.setIpType(data.get("ipType"));
 		query.setDisk(data.get("disk"));
 		query.setPhyServerId(data.get("phyServerId"));
+		query.setFlag(BaseUtil.isEmpty(data.get("flag")) ? null : data.get("flag"));
 		
 		PageList<VirServer> page = vss.findPage(query, pageBounds);
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -71,6 +73,8 @@ public class VirServerController {
 		bean.setProTag(data.get("proTag"));
 		bean.setIpType(data.get("ipArry"));
 		bean.setApp(data.get("appArry"));
+		bean.setFlag(data.get("flag"));
+		bean.setFlagName(data.get("flagName"));
 		vss.insert(bean);
 		
 		return Constants.standardControllerSuccessReturnMap;
@@ -102,6 +106,8 @@ public class VirServerController {
 		bean.setProTag(data.get("proTag"));
 		bean.setIpType(data.get("ipArry"));
 		bean.setApp(data.get("appArry"));
+		bean.setFlag(data.get("flag"));
+		bean.setFlagName(data.get("flagName"));
 		vss.update(bean);
 		return Constants.standardControllerSuccessReturnMap;
 	}

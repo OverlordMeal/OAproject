@@ -72,8 +72,14 @@
 						<tr>
 							<td>连接信息:</td>
 							<td colspan="3" id="linkPlace">
-								<input type="button" value="增加" id="addLink"/>
+								<input type="button" value="增加连接" id="addLink"/>
 								<span>格式为服务器端口-交换机号-交换机端口</span>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>标签信息:</td>
+							<td colspan="2" id="flagPlace">
 							</td>
 						</tr>
 						
@@ -87,21 +93,23 @@
 	</div>
 	<script>
 		function submitForm() {
-			
 			if ($("#ff").form('validate')) {
-				
 				var arry = [];
 				$.each($("#linkPlace div"), function(index, val) {
 					arry.push($(this).find("[flag='serverEth']").val() + "&" 
 							+ $(this).find("[flag='serverSwitches']").val() + "&" 
 							+ $(this).find("[flag='serverSwitchesEth']").val());
 				});
+				var flag =$("#superId").val();
+				var flagName =$("#superName").val();
 				var options = {
 					dataType : 'json',
 					type : 'post',
 					url : config.baseURL + 'phyServer/add.json',
 					data : {
-						arry : arry.join(",")
+						arry : arry.join(","),
+						flag : flag,
+						flagName : flagName
 					},
 					success : function(data) {
 						parent.$('#win').window('close');
@@ -114,31 +122,29 @@
 						return false;
 					}
 				};
-
 				$('#ff').ajaxSubmit(options);
 			}
 		}
-		 var switchesArr =[];
 		$(document).ready(function() {
+		var switches =[];
 			$.ajax({ 
 				dataType : 'json',
 				type : 'post',
-				url : config.baseURL + 'phyServer/findSwichesList.json',
+				async: false,
+				url : config.baseURL + 'switches/findAll.json',
 				success: function(data){
-		       	switchesArr = (data.switchesIdList);
-		      }});
-			
-			
+					switches = data.rows;
+				}
+			});
 			$("#addLink").click(function() {
 				var _html = '<div>';
-				_html += '<input style="width:40px;" flag="serverEth"/>';
+				_html += '<input style="width:50px;" flag="serverEth"/>';
 				_html += '-<select flag="serverSwitches">';
-				_html += '<option >请选择交换机ID</option>';
-				for (var i = 0; i < switchesArr.length; i++) {
-					_html += '<option >'+switchesArr[i]+'</option>';
+				for (var i = 0; i < switches.length; i++) {
+					_html += '<option value="'+switches[i].id+'">'+switches[i].id+"号"+switches[i].switchesModel+'</option>';
 				}
 				_html += '</select>';
-				_html += '-<input style="width:40px;" flag="serverSwitchesEth"/>';
+				_html += '-<input style="width:50px;" flag="serverSwitchesEth"/> ';
 				_html += '<input type="button" flag="del" value="删除"/>';
 				_html += '</div>';
 				_html = $(_html);
@@ -146,11 +152,25 @@
 					$(this).parent().remove();
 				});
 				$("#linkPlace").append(_html);
-				
 			});
 			
-			
-			
+				var _html = '<div>';
+				_html += '<td>标签:</td>'
+				_html += '<td><input class="easyui-input" style="width: 80px;" name="superName" id="superName" readonly="readonly">'
+				_html += '<input type="hidden" style="width: 80px;" name="superId" id="superId"></td>'
+				_html += '<input type="button" flag="del" value="删除"/>';
+				_html += '</div>';
+				_html = $(_html);
+				_html.find("[flag='del']").click(function() {
+					$(this).parent().remove();
+				});
+				$("#flagPlace").append(_html);
+				$("#superName").click(function(event) {
+					selectTree.initProFlagCheck("superName", function(ids, names) {
+						$("#superId").val(ids);
+						$("#superName").val(names);
+					});
+				});
 		});
 	</script>
 </body>

@@ -4,12 +4,17 @@ var selectTree = {
 	 * 初始化复选控件
 	 * @param inputId
 	 * 						input Id
-	 * @param checkFn
+	 * @param checkFnh
 	 * 						处理选择数据函数 (传入id数组, name数组)
 	 */
 	initMenuCheck : function(inputId, checkFn) {
 		selectTree.init(inputId, 1, 'menu/ztree/find/check', checkFn, null, null, null, null);
 	},
+	
+	initProFlagCheck : function(inputId, checkFn) {
+		selectTree.init(inputId, 1, 'proFlag/ztree/find/check', checkFn, null, null, null, null);
+	},
+	//标签
 
 	/**
 	 * 初始化单选控件
@@ -20,6 +25,11 @@ var selectTree = {
 	 */
 	initMenuRadio : function(inputId, checkFn) {
 		selectTree.init(inputId, 0, "menu/ztree/find/radio", checkFn, null, null, null, null);
+	},
+	
+	//标签
+	initProFlagRadio : function(inputId, checkFn) {
+		selectTree.init(inputId, 0, "proFlag/ztree/find/radio", checkFn, null, null, null, null);
 	},
 
 	/**

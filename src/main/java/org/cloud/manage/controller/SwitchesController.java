@@ -125,5 +125,24 @@ public class SwitchesController {
 		this.sms.delete(Integer.parseInt(data.get("id")));
 		return Constants.standardControllerSuccessReturnMap;
 	}
+	
+	/**
+	 * 
+	 * @param 查询相关条件
+	 * @param request
+	 * @return 返回list 查询结果
+	 */
+	
+	@RequestMapping(value = "/switches/findAll", method = RequestMethod.POST)
+	@ResponseBody
+	@NeedLogin
+	public Map<String, Object> findAll(@RequestParam Map<String, String> data, HttpServletRequest request) {
+
+		PageList<Switches> page = sms.findPage(new SwitchesQuery(), new PageBounds());
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("rows", page);
+
+		return result;
+	}
 
 }

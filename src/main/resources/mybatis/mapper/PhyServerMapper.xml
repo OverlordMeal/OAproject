@@ -4,7 +4,7 @@
 
 <mapper namespace="org.cloud.manage.dao.PhyServerDao">
 
-	 <select id="findPage" resultType="org.cloud.manage.model.PhyServer"
+	<!--  <select id="findPage" resultType="org.cloud.manage.model.PhyServer"
 		parameterType="org.cloud.manage.model.vo.PhyServerQuery">
 		SELECT
 		a.*,b.server_eth,b.switches_id,b.switches_eth
@@ -17,9 +17,12 @@
 				AND a.server_model like
 				CONCAT('%',CONCAT(#{query.serverModel},'%'))
 			</if>
+			<if test="query.flag != null">
+				 a.flag REGEXP CONCAT(',',CONCAT(#{query.flag},','))
+			</if>
 		</where>
 	</select>
-
+ -->
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		insert
@@ -30,7 +33,9 @@
 		memory,
 		cpu,
 		ethernets,
-		comment
+		comment,
+		flag,
+		flag_name
 		)
 		values
 		(#{ipAddress},
@@ -39,7 +44,10 @@
 		#{memory},
 		#{cpu},
 		#{ethernets},
-		#{comment})
+		#{comment},
+		#{flag},
+		#{flagName}
+		)
 	</insert>
 
 
@@ -84,7 +92,9 @@
 		memory = #{memory},
 		cpu = #{cpu},
 		ethernets = #{ethernets},
-		comment = #{comment}
+		comment = #{comment},
+		flag = #{flag},
+		flag_name = #{flagName}
 		where id = #{id}
 	</update>
 
@@ -106,12 +116,20 @@
 	
 	<select id = "findServerPage" parameterType="org.cloud.manage.model.vo.PhyServerQuery" 
 	resultType="org.cloud.manage.model.PhyServer">
-	select * from t_phy_server a 
+	select * from t_phy_server a <where>
 			<if test="query.serverModel != null">
-			<where>
 				AND a.server_model like CONCAT('%',CONCAT(#{query.serverModel},'%'))
-			</where>
 			</if>
+			<if test="query.flag != null">
+				AND  a.flag like CONCAT(',',CONCAT(#{query.flag},','))
+			</if>
+			<if test="query.flagName != null">
+				AND  a.flag_name like CONCAT(',',CONCAT(#{query.flagName},','))
+			</if>
+			</where>
+			
+			
+		
 	
 	</select>
 	
@@ -127,8 +145,15 @@
 	</select>
 	
 	
+	<select id="findFlagById" parameterType="org.cloud.manage.model.PhyServer" resultType="org.cloud.manage.model.ProFlag">
+		select a.* from t_phy_server_flag a where phy_server_id=#{id}
+	</select>
 	
 	
+	
+
+
+
 
 
 </mapper>

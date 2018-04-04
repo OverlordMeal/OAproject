@@ -42,6 +42,12 @@ public class VirServerQuery {
 	//备注
 	private String comment;
 
+	//标签
+	private String flag;
+	
+	//标签名字
+	private String flagName;
+	
 	
 	//将得到json格式的字符串转化为 标准格式输出到网页上
 	public String getIpTypeString(){
@@ -160,6 +166,22 @@ public class VirServerQuery {
 					+ (memory != null ? "memory=" + memory + ", " : "") + (cpu != null ? "cpu=" + cpu + ", " : "")
 					+ (disk != null ? "disk=" + disk + ", " : "") + (proTag != null ? "proTag=" + proTag + ", " : "")
 					+ (app != null ? "app=" + app : "") + "]";
+		}
+
+		public String getFlag() {
+			return flag;
+		}
+
+		public String getFlagName() {
+			return flagName;
+		}
+
+		public void setFlag(String flag) {
+			this.flag = flag;
+		}
+
+		public void setFlagName(String flagName) {
+			this.flagName = flagName;
 		}
 		
 		

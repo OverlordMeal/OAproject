@@ -63,6 +63,9 @@
 					按物理ip地址查找:<select id = "phyServerId" name="phyServerId" flag="phyServerId">
 									<option value = ''>无</option>
 									</select>
+					服务器标签类型:<input class="easyui-input" style="width: 80px;" name="superName" id="superName" readonly="readonly">
+						<input type="hidden" style="width: 80px;" name="superId" id="superId">		
+									
 							<a href="javascript:void(0);"
 							class="easyui-linkbutton" iconCls="icon-search"
 							onclick="searchVirServer();">查询</a>
@@ -164,7 +167,24 @@
 					editor : {
 						type : 'text'
 					}
-				},   {
+				},  {
+					field : 'flagString',
+					title : '标签',
+					fitColumns : true,
+					align : 'center',
+					hidden : true,
+					editor : {
+						type : 'text'
+					}
+				}, {
+					field : 'flagNameString',
+					title : '标签名',
+					fitColumns : true,
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				},  {
 					field : 'comment',
 					title : '备注',
 					align : 'center',
@@ -220,6 +240,8 @@
 				queryParams.ipType = $("#ipType").val()+',"ipAddress":"'+$("#ipAddress").val();
 				queryParams.disk = $("#disk").val();
 				queryParams.phyServerId = $("#phyServerId").val();
+				queryParams.flag = $("#superId").val();
+				queryParams.flagName = $("#superName").val();
 				$('#dataGridVirServer').datagrid('reload');
 			}
 			
@@ -250,6 +272,13 @@
 				}
 			}
 			$(document).ready(function(){
+				
+				$("#superName").click(function() {
+					selectTree.initProFlagRadio("superName", function(ids, names) {
+						$("#superName").val(names[0]);
+						$("#superId").val(ids[0]);
+					});
+				});
 				
 				var phyServerIdArr =[];
 				$.ajax({ 

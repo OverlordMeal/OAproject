@@ -62,8 +62,15 @@
 						<tr>
 							<td>连接信息:</td>
 							<td colspan="3" id="linkPlace">
-								<input type="button" value="增加" id="addLink"/>
+								<input type="button" value="增加连接" id="addLink"/>
 								<span>格式为服务器端口-交换机号-交换机端口</span>
+							</td>
+						</tr>
+						
+							<tr>
+							<td>标签信息:</td>
+							<td colspan="2" id="flagPlace">
+								<span></span>
 							</td>
 						</tr>
 	    	</table>
@@ -79,16 +86,20 @@
 			var arry = [];
 			$.each($("#linkPlace div"), function(index, val) {
 				arry.push($(this).find("[flag='serverEth']").val() + "&" 
-						+ $(this).find("[flag='serverSwitches']").val().replace(/[^0-9]/ig,"")+ "&" 
+						+ $(this).find("[flag='serverSwitches']").attr("value") + "&" 
 						+ $(this).find("[flag='serverSwitchesEth']").val());
 			});
+			var flag =$("#superId").val();
+			var flagName =$("#superName").val();
 			if ($("#ff").form('validate')) {
 				var options = {
 						dataType : 'json',
 						type : 'post',
 						url : config.baseURL + 'phyServer/update.json',
 						data : {
-							arry : arry.join(",")
+							arry : arry.join(","),
+							flag : flag,
+							flagName : flagName
 						},
 						success : function(data) {
 							parent.$('#win').window('close');
@@ -105,69 +116,100 @@
 		}
 		
 		$(document).ready(function() {
-			 var switchesArr =[];
+			var switches =[];
 			$.ajax({ 
 				dataType : 'json',
 				type : 'post',
-				url : config.baseURL + 'phyServer/findSwichesList.json',
+				async: false,
+				url : config.baseURL + 'switches/findAll.json',
 				success: function(data){
-		       switchesArr = (data.switchesIdList);
-		       switchesArr1 = (data.switchesModelList);
-		      }});
-			$.ajax({
-		        type: "POST",
-		        url: config.baseURL + "phyServer/edit.json",
-		        dataType: "json",
-		        data : {
-		            "id" : parent.$('#id').val(),
-		        },
-		        success: function(data){
-		        	var bean = data.bean;
-		        	$("#id").val(bean.id),
-		        	$("#ipAddress").val(bean.ipAddress),
-					$("#ethernets").val(bean.ethernets),
-					$("#serverModel").val(bean.serverModel),
-					$("#cpu").val(bean.cpu),
-					$("#memory").val(bean.memory),
-					$("#comment").val(bean.comment),
-		        	$("#onlineTime").val(bean.onlineTimeStr);
-		       for (var j = 0; j <bean.linkList.length; j++) {
-				
+					switches = data.rows;
+				}
+			});
 			
-			    		var _html = '<div>';
-						_html += '<input style="width:50px;" flag="serverEth" value ="'+bean.linkList[j].serverEth +'"/>';
-						_html += '-<select flag="serverSwitches">';
-						_html += '<option >交换机ID：'+bean.linkList[j].switchesId+'</option>';
-						for (var i = 0; i < switchesArr.length; i++) {
-							_html += '<option >'+switchesArr[i]+"号"+switchesArr1[i]+'</option>';
-						}
-						_html += '</select>';
-						_html += '-<input style="width:50px;" flag="serverSwitchesEth"value ="'+bean.linkList[j].switchesEth +'" />';
-						_html += '<input type="button" flag="del" value="删除"/>';
-						_html += '</div>';
-						_html = $(_html);
-					 	
-						_html.find("[flag='del']").click(function() {
-							$(this).parent().remove();
-						});
-						
-						
-						$("#linkPlace").append(_html);
-						
-		     		  }
-		        },
-		        error : function() { 
-		        	$.messager.alert('系统提示', '数据获取失败!', 'error');
-		        }
-		    });
+			//发送同步请求 获取标签信息
+			$.ajax({ 
+				dataType : 'json',
+				type : 'post',
+				url : config.baseURL + 'switches/findAll.json',
+				success: function(data){
+					$.ajax({
+				        type: "POST",
+				        url: config.baseURL + "phyServer/edit.json",
+				        dataType: "json",
+				        data : {
+				            "id" : parent.$('#id').val(),
+				        },
+				        success: function(data){
+				        	var bean = data.bean;
+				        	$("#id").val(bean.id),
+				        	$("#ipAddress").val(bean.ipAddress).validatebox('validate'),
+							$("#ethernets").val(bean.ethernets).validatebox('validate'),
+							$("#serverModel").val(bean.serverModel).validatebox('validate'),
+							$("#cpu").val(bean.cpu).validatebox('validate'),
+							$("#memory").val(bean.memory).validatebox('validate'),
+							$("#comment").val(bean.comment),
+				        	$("#onlineTime").val(bean.onlineTimeStr);
+				        	
+				        	$.each(bean.linkList, function(index, link) {
+								var _html = '<div>';
+								_html += '<input style="width:50px;" flag="serverEth" value ="'+link.serverEth +'"/>';
+								_html += '-<select flag="serverSwitches" id = "serverSwitches">';
+								$.each(switches, function(index, bean) {
+									if (link.switchesId === bean.id) {
+										_html += '<option selected="selected" value="'+bean.id+'">'+bean.switchesModel+'</option>';
+									} else {
+										_html += '<option value="'+bean.id+'">'+bean.switchesModel+'</option>';
+									}
+								});
+								_html += '</select>';
+								_html += '-<input style="width:50px;" flag="serverSwitchesEth" value ="'+link.switchesEth +'" />';
+								_html += '<input type="button" flag="del" value="删除"/>';
+								_html += '</div>';
+								_html = $(_html);
+							 	
+								_html.find("[flag='del']").click(function() {
+									$(this).parent().remove();
+								});
+								$("#linkPlace").append(_html);
+							});
+				        	
+				        	//回显标签信息
+								var _html = '<div>';
+								_html += '<td>标签:</td>'
+								_html += '<td><input class="easyui-input" style="width: 80px;" name="superName" id="superName" readonly="readonly">';
+								_html += '<input type="hidden" style="width: 80px;" name="superId" id="superId"> </td>';
+								_html += '<input type="button" flag="del" value="删除"/>';
+								_html += '</div>';
+								_html = $(_html);
+								_html.find("[flag='del']").click(function() {
+									$(this).parent().remove();
+								});
+								$("#flagPlace").append(_html);
+								$("#superName").val(bean.flagString);
+								$("#superName").click(function(event) {
+									selectTree.initProFlagCheck("superName", function(ids, names) {
+										$("#superName").val(names);
+										$("#superId").val(ids);
+									});
+								});
+				        	
+				        	
+				        },
+				        error : function() { 
+				        	$.messager.alert('系统提示', '数据获取失败!', 'error');
+				        }
+				    });
+				}});
+			
 			
 		
 			$("#addLink").click(function() {
 				var _html = '<div>';
 				_html += '<input style="width:50px;" flag="serverEth"/>';
 				_html += '-<select flag="serverSwitches">';
-				for (var i = 0; i < switchesArr.length; i++) {
-					_html += '<option >'+switchesArr[i]+"号"+switchesArr1[i]+'</option>';
+				for (var i = 0; i < switches.length; i++) {
+					_html += '<option value="'+switches[i].id+'">'+switches[i].id+"号"+switches[i].switchesModel+'</option>';
 				}
 				_html += '</select>';
 				_html += '-<input style="width:50px;" flag="serverSwitchesEth"/>';
@@ -177,9 +219,7 @@
 				_html.find("[flag='del']").click(function() {
 					$(this).parent().remove();
 				});
-				
 				$("#linkPlace").append(_html);
-				
 			});
 			
 		});

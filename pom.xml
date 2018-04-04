@@ -33,6 +33,31 @@
 				<maven.db.dbMast.url><![CDATA[jdbc:mysql://db.d17.cc:3306/d17-demandmanage?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false]]></maven.db.dbMast.url>
 			</properties>
 		</profile>
+		
+		<!-- <profiles>
+		<profile>
+			<id>test</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+				<spring.version>3.2.9.RELEASE</spring.version>
+				<mybatis.version>3.2.4</mybatis.version>
+				<slf4j.version>1.7.2</slf4j.version>
+				<log4j.version>1.2.17</log4j.version>
+				<config.baseURL>http://demand-manage.d17.cc:8080/d17-demand-manage/</config.baseURL>
+				<config.baseURL.domain>demand-manage.d17.cc</config.baseURL.domain>
+				<js.config.baseURL>http://demand-manage.d17.cc:8080/d17-demand-manage/</js.config.baseURL>
+				<maven.memcache.host>192.168.40.128</maven.memcache.host>
+				<maven.memcache.port>11211</maven.memcache.port>
+				<maven.system.useCache>true</maven.system.useCache>
+				<maven.db.user>root</maven.db.user>
+				<maven.db.password>root</maven.db.password>
+				<maven.db.dbMast.url><![CDATA[jdbc:mysql://localhost:3306/d17-demandmanage?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&failOverReadOnly=false]]></maven.db.dbMast.url>
+			</properties>
+		</profile> -->
+		
 	
 		<profile>
 			<id>online</id>

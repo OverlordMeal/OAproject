@@ -2,7 +2,9 @@ package org.cloud.manage.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -12,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.cloud.interceptor.annotation.NeedLogin;
 import org.cloud.lang.BaseUtil;
 import org.cloud.manage.model.PhyServer;
+import org.cloud.manage.model.ProFlag;
 import org.cloud.manage.model.vo.PhyServerQuery;
 import org.cloud.manage.service.PhyServerService;
 import org.cloud.manage.utils.AuthUtil;
@@ -59,6 +62,10 @@ public class PhyServerController {
 				e.printStackTrace();
 			}
 		}
+		query.setFlag(BaseUtil.isEmpty(data.get("flag")) ? null : data.get("flag"));
+		
+		
+		
 		PageList<PhyServer> page = pss.findPage(query, pageBounds);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("rows", page);
@@ -70,7 +77,8 @@ public class PhyServerController {
 	@ResponseBody
 	@NeedLogin
 	public Map<String, Object> add(@RequestParam Map<String, String> data, HttpServletRequest request) {
-
+		
+		
 		PhyServer bean = new PhyServer();
 		bean.setIpAddress(data.get("ipAddress"));
 		bean.setServerModel(data.get("serverModel"));
@@ -88,9 +96,8 @@ public class PhyServerController {
 		}
 		String str = data.get("arry");
 		//当数据为空 或者 数据格式不对时不插入数据
-		if (!BaseUtil.isEmpty(str) ) {
-			bean.setLinkList(AuthUtil.linkChangeList(str));
-		}
+		bean.setFlag(data.get("flag"));
+		bean.setFlagName(data.get("flagName"));
 		pss.insert(bean);
 		return Constants.standardControllerSuccessReturnMap;
 	}
@@ -128,14 +135,14 @@ public class PhyServerController {
 				e.printStackTrace();
 			}
 		}
-		
-		
 		String str = data.get("arry");
 		//当数据为空 或者 数据格式不对时不插入数据
 		if (!BaseUtil.isEmpty(str) ) {
 			query.setLinkList(AuthUtil.linkChangeList(str));
 		}
-		  
+		query.setFlag(data.get("flag"));
+		query.setFlagName(data.get("flagName"));
+		
 		pss.update(query);
 		return Constants.standardControllerSuccessReturnMap;
 	}
@@ -145,7 +152,6 @@ public class PhyServerController {
 	@NeedLogin
 	public Map<String, Object> delete(@RequestParam Map<String, String> data, HttpServletRequest request) {
 		this.pss.deleteServer(Long.parseLong(data.get("id")));
-		
 		return Constants.standardControllerSuccessReturnMap;
 	}
 
@@ -154,8 +160,7 @@ public class PhyServerController {
 	@NeedLogin
 	public Map<String, Object> findSwichesList(@RequestParam Map<String, String> data, HttpServletRequest request) {
 		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("switchesIdList", pss.findSwitchesId());
-		result.put("switchesModelList", pss.findSwitchesModel());
+		result.put("switchesList", pss.getAllPhyServer());
 		
 		return result;
 	}

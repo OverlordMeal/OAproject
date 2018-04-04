@@ -82,7 +82,11 @@
 								<span>先选择应用类型 再输入路径地址！</span>
 							</td>
 						</tr>
-						
+						<tr>
+							<td>标签信息:</td>
+							<td colspan="2" id="flagPlace">
+							</td>
+						</tr>
 					</table>
 			</form>
 		</div>
@@ -107,11 +111,9 @@
 					appArry.push($(this).find("[flag='appType']").val() + "&" 
 							+ $(this).find("[flag='appPath']").val());
 				});
-				
-				
-					var phyServerId = $("#phyServerIdVal option:selected").val();
-				
-				
+				var phyServerId = $("#phyServerIdVal option:selected").val();
+				var flag =$("#superId").val();
+				var flagName =$("#superName").val();
 				var options = {
 					dataType : 'json',
 					type : 'post',
@@ -119,7 +121,10 @@
 					data : {
 						"phyServerId" : phyServerId,
 						ipArry : ipArry.join(","),
-						appArry : appArry.join(",")
+						appArry : appArry.join(","),
+						flag : flag,
+						flagName : flagName
+						
 					},
 					success : function(data) {
 						parent.$('#win').window('close');
@@ -214,6 +219,24 @@
 				alert(arry);
 			}); */
 			
+			
+			var _html = '<div>';
+			_html += '<td>标签:</td>'
+			_html += '<td><input class="easyui-input" style="width: 80px;" name="superName" id="superName" readonly="readonly">'
+			_html += '<input type="hidden" style="width: 80px;" name="superId" id="superId"></td>'
+			_html += '<input type="button" flag="del" value="删除"/>';
+			_html += '</div>';
+			_html = $(_html);
+			_html.find("[flag='del']").click(function() {
+				$(this).parent().remove();
+			});
+			$("#flagPlace").append(_html);
+			$("#superName").click(function(event) {
+				selectTree.initProFlagCheck("superName", function(ids, names) {
+					$("#superId").val(ids);
+					$("#superName").val(names);
+				});
+			});
 			
 			
 			

@@ -74,6 +74,14 @@
 							</td>
 						</tr>
 						
+						
+						<tr>
+							<td>标签信息:</td>
+							<td colspan="2" id="flagPlace">
+								<span></span>
+							</td>
+						</tr>
+						
 	    	</table>
 	    </form>
 	    </div>
@@ -98,7 +106,8 @@
 			});
 			
 			var phyServerId = $("#phyServerIdVal option:selected").val();
-			
+			var flag =$("#superId").val();
+			var flagName =$("#superName").val();
 			if ($("#ff").form('validate')) {
 				var options = {
 						dataType : 'json',
@@ -107,7 +116,9 @@
 						data : {
 							"phyServerId" : phyServerId,
 							ipArry : ipArry.join(","),
-							appArry : appArry.join(",")
+							appArry : appArry.join(","),
+							flag : flag,
+							flagName : flagName
 						},
 						success : function(data) {
 							parent.$('#win').window('close');
@@ -202,6 +213,22 @@
 		 				});
 		 				$("#appPlace").append(_html);
 					}
+		     		  
+		     		  
+		     			var _html = '<div>';
+		    			_html += '<td>标签:</td>'
+		    			_html += '<td><input class="easyui-input" style="width: 80px;" name="superName" id="superName" readonly="readonly">';
+		    			_html += '<input type="hidden" style="width: 80px;" name="superId" id="superId"> </td>';
+		    			_html += '</div>';
+		    			_html = $(_html);
+		    			$("#flagPlace").append(_html);
+		    			$("#superName").val(bean.flagNameString);
+		    			$("#superName").click(function(event) {
+		    				selectTree.initProFlagCheck("superName", function(ids, names) {
+		    					$("#superName").val(names);
+		    					$("#superId").val(ids);
+		    				});
+		    			});
 		        },
 		        error : function() { 
 		        	$.messager.alert('系统提示', '数据获取失败!', 'error');

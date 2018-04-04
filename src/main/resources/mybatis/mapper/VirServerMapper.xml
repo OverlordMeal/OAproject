@@ -19,6 +19,12 @@
 			<if test="query.phyServerId != null">
 				AND t.phy_server_id like CONCAT('%',CONCAT(#{query.phyServerId},'%'))
 			</if>
+				<if test="query.flag != null">
+				AND  t.flag like CONCAT(',',CONCAT(#{query.flag},','))
+			</if>
+			<if test="query.flagName != null">
+				AND  t.flag_name like CONCAT(',',CONCAT(#{query.flagName},','))
+			</if>
 		</where>
 	</select>
 	
@@ -45,7 +51,10 @@
 		disk,
 		pro_tag,
 		app,
-		comment)
+		comment,
+		flag,
+		flag_name
+		)
 		values
 		(#{phyServerId},
 		#{ipType},
@@ -55,7 +64,10 @@
 		#{disk},
 		#{proTag},
 		#{app},
-		#{comment})
+		#{comment},
+		#{flag},
+		#{flagName}
+		)
 	</insert>
 	
 	<update id="update" parameterType="org.cloud.manage.model.VirServer">
@@ -68,7 +80,9 @@
 		       disk 		  = #{disk},
 		       pro_tag 		  = #{proTag},
 		       app 		  = #{app},
-		       comment 		  = #{comment}
+		       comment 		  = #{comment},
+		       flag = #{flag},
+			   flag_name = #{flagName}
 		 where id = #{id}
 	</update>
 	

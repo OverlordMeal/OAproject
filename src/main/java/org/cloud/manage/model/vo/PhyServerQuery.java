@@ -2,6 +2,11 @@ package org.cloud.manage.model.vo;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import org.cloud.manage.model.Link;
+import org.cloud.manage.model.ProFlag;
+import org.cloud.manage.utils.JsonUtil;
 
 public class PhyServerQuery extends BaseQuery{
 	//服务器主键id
@@ -25,13 +30,8 @@ public class PhyServerQuery extends BaseQuery{
 		//服务器端口数量
 		private Integer ethernets;
 		
-		public List getLinkList() {
-			return linkList;
-		}
-
-		public void setLinkList(List linkList) {
-			this.linkList = linkList;
-		}
+		
+	
 
 		private String comment;
 		
@@ -44,11 +44,25 @@ public class PhyServerQuery extends BaseQuery{
 		//连接的交换机的Id
 		private Integer switchesEth;
 		
+
+		//标签
+		private String flag;
+		
+		//标签名字
+		private String flagName;
+		
 		
 		//连接集合
-		private List linkList;
+		private List<Link> linkList;
 		
+		
+		public List<Link> getLinkList() {
+			return linkList;
+		}
 
+		public void setLinkList(List<Link> linkList) {
+			this.linkList = linkList;
+		}
 		public Long getId() {
 			return id;
 		}
@@ -152,8 +166,21 @@ public class PhyServerQuery extends BaseQuery{
 					+ (comment != null ? "comment=" + comment + ", " : "")
 					+ (linkList != null ? "linkList=" + linkList : "") + "]";
 		}
-		
-		
-		
+
+		public String getFlag() {
+			return flag;
+		}
+
+		public void setFlag(String flag) {
+			this.flag = flag;
+		}
+
+		public String getFlagName() {
+			return flagName;
+		}
+
+		public void setFlagName(String flagName) {
+			this.flagName = flagName;
+		}
 		
 }

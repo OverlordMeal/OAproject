@@ -39,7 +39,31 @@ public class VirServer {
 
 	// 备注
 	private String comment;
-
+	
+	
+	//标签
+	private String flag;
+	
+	//标签名字
+	private String flagName;
+	
+	public String getFlagNameString() {
+		if(BaseUtil.isEmpty(this.flagName)){
+			return "无标签";
+		}
+		else{
+			String str = "";
+			String[] str1 = flagName.split(",");
+			for (int i = 0; i < str1.length; i++) {
+				if(!BaseUtil.isEmpty(str1[i])){
+					str +=str1[i]+",";
+				}
+			}
+		return str;
+		}
+		
+	
+	}
 	// 将得到json格式的字符串转化为 标准格式输出到网页上
 	public String getIpTypeString() {
 		String str = "";
@@ -175,6 +199,22 @@ public class VirServer {
 				+ (memory != null ? "memory=" + memory + ", " : "") + (cpu != null ? "cpu=" + cpu + ", " : "")
 				+ (disk != null ? "disk=" + disk + ", " : "") + (proTag != null ? "proTag=" + proTag + ", " : "")
 				+ (app != null ? "app=" + app : "") + "]";
+	}
+
+	public String getFlag() {
+		return flag;
+	}
+
+	public String getFlagName() {
+		return flagName;
+	}
+
+	public void setFlag(String flag) {
+		this.flag = flag;
+	}
+
+	public void setFlagName(String flagName) {
+		this.flagName = flagName;
 	}
 
 }

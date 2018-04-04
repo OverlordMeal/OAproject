@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.cloud.manage.model.Link;
 import org.cloud.manage.model.PhyServer;
+import org.cloud.manage.model.ProFlag;
 import org.cloud.manage.model.vo.PhyServerQuery;
 
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
@@ -80,5 +81,22 @@ public interface PhyServerDao {
 
 	public List<String> findSwitchesModel();
 
+	
+	
+	/**
+	 * 返回flag信息
+	 */
+	
+	public List<ProFlag> findFlagById(PhyServer phyServer);
+	
+	public Long insertFlag(ProFlag flag);
+	
+	//根据服务器id找标签信息
+	public List<ProFlag> findFlag(Long id);
+
+	public Long deleteFlag(Long phyServerId);
+
+	public List<Long> findPhyServerIdByFlag();
+	
 
 }

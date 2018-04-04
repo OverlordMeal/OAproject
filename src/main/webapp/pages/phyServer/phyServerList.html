@@ -55,6 +55,8 @@
 				<div>
 					物理服务器名称: <input class="easyui-input" style="width: 80px" id="serverModel" name="serverModel"> 
 					物理服务器接口数量: <input class="easyui-input" style="width: 80px" id="ethernets"name="ethernets">
+					物理服务器标签类型:<input class="easyui-input" style="width: 80px;" name="superName" id="superName" readonly="readonly">
+						<input type="hidden" style="width: 80px;" name="superId" id="superId">
 					
 					<a href="javascript:void(0);"
 							class="easyui-linkbutton" iconCls="icon-search"
@@ -150,7 +152,25 @@
 					editor : {
 						type : 'text'
 					}
+				},{
+					field : 'flagString',
+					title : '标签',
+					fitColumns : true,
+					align : 'center',
+					hidden : true,
+					editor : {
+						type : 'text'
+					}
 				}, {
+					field : 'flagNameString',
+					title : '标签名',
+					fitColumns : true,
+					align : 'center',
+					editor : {
+						type : 'text'
+					}
+				}, 
+				{
 					field : 'switchesId',
 					title : '使用的叫交换机号',
 					align : 'center',
@@ -223,15 +243,14 @@
 				queryParams.ipAddress = $("#ipAddress").val();
 				queryParams.ethernets = $("#ethernets").val();
 				queryParams.serverModel = $("#serverModel").val();
+				queryParams.flag = $("#superId").val();
+				queryParams.flagName = $("#superName").val();
 				$('#dataGridPhyServer').datagrid('reload');
 			}
 			
 			function destoryPhyServer() {
 				var row = $('#dataGridPhyServer').datagrid('getSelected');
-				console.log(row);
 				if (row) {
-					alert
-					
 					$.messager.confirm('系统提示', '您是否要删除当前选中的服务器吗？', function(data) {
 						if (data) {
 							$.ajax({
@@ -284,7 +303,12 @@
 				}
 			}
 			$(document).ready(function(){
-				
+				$("#superName").click(function() {
+					selectTree.initProFlagRadio("superName", function(ids, names) {
+						$("#superName").val(names[0]);
+						$("#superId").val(ids[0]);
+					});
+				});
 			});
 		</script>
 </body>

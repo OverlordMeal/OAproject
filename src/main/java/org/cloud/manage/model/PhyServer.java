@@ -1,5 +1,6 @@
 package org.cloud.manage.model;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -37,9 +38,14 @@ public class PhyServer {
 	// 备注
 	private String comment;
 
+	//标签
+	private String flag;
+	
+	//标签名字
+	private String flagName;
 	// 连接表集合
 	private List<Link> linkList;
-
+	
 	public String getLinkToStr() {
 		if (BaseUtil.isEmpty(linkList)) {
 			return "无连接";
@@ -67,15 +73,7 @@ public class PhyServer {
 			}
 			return str;
 		}
-		
-		
 	}
-	
-	
-	
-	
-	
-	
 	
 	
 	public Long getId() {
@@ -159,4 +157,70 @@ public class PhyServer {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "PhyServer [" + (id != null ? "id=" + id + ", " : "")
+				+ (ipAddress != null ? "ipAddress=" + ipAddress + ", " : "")
+				+ (onlineTime != null ? "onlineTime=" + onlineTime + ", " : "")
+				+ (serverModel != null ? "serverModel=" + serverModel + ", " : "")
+				+ (memory != null ? "memory=" + memory + ", " : "") + (cpu != null ? "cpu=" + cpu + ", " : "")
+				+ (ethernets != null ? "ethernets=" + ethernets + ", " : "")
+				+ (comment != null ? "comment=" + comment + ", " : "") + (flag != null ? "flag=" + flag + ", " : "")
+				+ (linkList != null ? "linkList=" + linkList : "") + "]";
+	}
+
+	public String getFlag() {
+		return flag;
+	}
+	public String getFlagString() {
+		if(BaseUtil.isEmpty(this.flag)){
+			return "无标签";
+		}
+		else{
+			String str = "";
+			String[] str1 = flag.split(",");
+			for (int i = 0; i < str1.length; i++) {
+				if(!BaseUtil.isEmpty(str1[i])){
+					str +=str1[i]+",";
+				}
+			}
+		return str;
+		}
+		
+	
+	}
+
+	public void setFlag(String flag) {
+		this.flag = flag;
+	}
+
+	public String getFlagName() {
+		return flagName;
+	}
+
+	public void setFlagName(String flagName) {
+		this.flagName = flagName;
+	}
+	
+	
+	public String getFlagNameString() {
+		if(BaseUtil.isEmpty(this.flagName)){
+			return "无标签";
+		}
+		else{
+			String str = "";
+			String[] str1 = flagName.split(",");
+			for (int i = 0; i < str1.length; i++) {
+				if(!BaseUtil.isEmpty(str1[i])){
+					str +=str1[i]+",";
+				}
+			}
+		return str;
+		}
+		
+	
+	}
+
+
 }
+

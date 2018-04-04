@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import org.cloud.lang.BaseUtil;
 import org.cloud.manage.interceptor.OnlineData;
 import org.cloud.manage.model.Link;
+import org.cloud.manage.model.ProFlag;
 import org.cloud.manage.model.User;
 import org.cloud.web.session.Session;
 
@@ -79,6 +80,17 @@ public class AuthUtil {
 		return list;
 		
 	}
+	
+	/**
+	 * 将link字符串转为为map的集合
+	 * @param str
+	 * @return
+	 */
+	
+	public  static List<ProFlag> flagChangeList(String str){
+		return null;
+	}
+	
 	
 	
 	
