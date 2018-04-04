@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta charset="UTF-8">
+	
+	<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="/d17-demand-manage/easyUi/themes/icon.css">
+	<link rel="stylesheet" type="text/css"  href="/d17-demand-manage/css/zTreeStyle/zTreeStyle.css">
+		
+	<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery-1.8.3.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/easyUi/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/common/config.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/common/common.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/selectTree.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery.ztree.all-3.5.min.js"></script>
+	<script type="text/javascript" src="/d17-demand-manage/js/jquery/jquery.form.js"></script>
+
+</head>
+<body>
+	<div style="margin:10px 0;"></div>
+	<div class="easyui-panel" >
+		<div style="padding-bottom: 10px; padding-top: 10px;">
+	    <form id="ff" method="post">
+	    	<input type="hidden" id="superId" name="superId">
+	    	<table style="margin: auto;">
+	    		<tr>
+	    			<td>菜单名称:</td>
+	    			<td><input class="easyui-validatebox" type="text" name="name"  id="name"  style="width: 180px;" data-options="required:true" ></input></td>
+	    		</tr>
+	    		<tr>
+    				<td>父标签:</td>
+	    			<td><input class="easyui-validatebox" type="text" name="superName" id="superName"  data-options="required:true" onkeypress="javascript:return false" style="width: 180px;"></input></td>
+	    			<td>是否有子标签:</td>
+	    			<td>
+    					<select class="easyui-combobox" name="hasChild" id="hasChild" editable="false" panelHeight="auto" style="width: 184px;">
+	    					<option value="1"  selected="selected">是</option>
+	    					<option value="0">否</option>
+    					</select>
+    				</td>
+	    		</tr>
+	    	</table>
+	    </form>
+	    </div>
+	    <div style="text-align:center;padding:5px">
+	    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()">提交</a>
+	    </div>
+	</div>
+	<script>
+		
+		function submitForm() {
+			
+			if ($("#ff").form('validate')) {
+				var options = {
+						dataType : 'json',
+						type : 'post',
+						url : config.baseURL + 'proFlag/add.json',
+						success : function(data) {
+							parent.$('#win').window('close');
+							location.href = config.baseURL + 'pages/proFlag/proFlagList.html';
+							parent.searchList();
+						},
+				        error : function() {
+				        	$.messager.alert('系统提示', '新增失败!', 'error');
+							return false;
+				        }
+					};
+
+					$('#ff').ajaxSubmit(options);
+			}
+		}
+		
+		$(document).ready(function() {
+			$("#superName").click(function(event) {
+				selectTree.initProFlagRadio("superName", function(ids, names) {
+					$("#superName").val(names).validatebox('validate');
+					$("#superId").val(ids);
+				});
+			});
+		});
+	</script>
+</body>
+</html>

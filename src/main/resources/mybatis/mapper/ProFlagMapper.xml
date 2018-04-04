@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.cloud.manage.dao.ProFlagDao">
+
+	 <select id="findPage" resultType="org.cloud.manage.model.ProFlag"
+		parameterType="org.cloud.manage.model.vo.ProFlagQuery">
+		select a.* from t_flag a
+		
+		
+	</select>
+
+	<select id="findByPid" parameterType="Long" resultType="org.cloud.manage.model.ProFlag">
+		select a.* from t_flag a where parent_id = #{pid}
+	</select>
+
+		<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+			insert into t_flag
+			(
+			tag_id,
+			parent_id,
+			has_child,
+			name
+			)
+			values
+			(
+			#{tagId},
+			#{parentId},
+			#{hasChild},
+			#{name}
+			)
+		</insert>
+		
+		
+		
+		
+		 <select id="findByTagId" resultType="org.cloud.manage.model.ProFlag"
+		parameterType="Long">
+		select a.* from t_flag a where tag_id = #{id}
+		</select>
+			
+			
+			<delete id="deleteById" parameterType="long">
+				delete from t_flag where tag_id = #{id}
+			</delete>
+			
+			
+			
+			<update id="updateByTagId" parameterType="org.cloud.manage.model.ProFlag" >
+				update  t_flag set   
+			   name       = #{name},
+		       parent_id  = #{parentId},
+		       has_child  = #{hasChild}
+			 where tag_id = #{tagId}
+				
+			</update>
+</mapper>
