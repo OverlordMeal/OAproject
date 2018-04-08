@@ -4,15 +4,12 @@ package org.cloud.manage.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.cloud.interceptor.annotation.NeedLogin;
 import org.cloud.lang.BaseUtil;
 import org.cloud.manage.model.VirServer;
-import org.cloud.manage.model.vo.PhyServerQuery;
 import org.cloud.manage.model.vo.VirServerQuery;
 import org.cloud.manage.service.VirServerService;
 import org.cloud.manage.utils.Constants;
@@ -32,7 +29,6 @@ public class VirServerController {
 	@Autowired
 	private VirServerService vss;
 	
-	private Logger log = Logger.getLogger(VirServerController.class.getName());
 
 	@RequestMapping(value = "/virServer/getVirServerList", method = RequestMethod.POST)
 	@ResponseBody
@@ -85,7 +81,6 @@ public class VirServerController {
 	@NeedLogin
 	public Map<String, Object> edit(@RequestParam Map<String, String> data) {
 		Long id = Long.parseLong(data.get("id"));
-		VirServerQuery query = new VirServerQuery();
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("bean", vss.findById(id));
 		return map;

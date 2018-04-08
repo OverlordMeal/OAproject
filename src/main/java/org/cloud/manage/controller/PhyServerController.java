@@ -2,19 +2,14 @@ package org.cloud.manage.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.cloud.interceptor.annotation.NeedLogin;
 import org.cloud.lang.BaseUtil;
 import org.cloud.manage.model.PhyServer;
-import org.cloud.manage.model.ProFlag;
 import org.cloud.manage.model.vo.PhyServerQuery;
 import org.cloud.manage.service.PhyServerService;
 import org.cloud.manage.utils.AuthUtil;
@@ -35,7 +30,6 @@ public class PhyServerController {
 	@Autowired
 	private PhyServerService pss;
 	
-	private Logger log = Logger.getLogger(PhyServerController.class.getName());
 
 	@RequestMapping(value = "/phyServer/getPhyServerList", method = RequestMethod.POST)
 	@ResponseBody
@@ -94,7 +88,6 @@ public class PhyServerController {
 				e.printStackTrace();
 			}
 		}
-		String str = data.get("arry");
 		//当数据为空 或者 数据格式不对时不插入数据
 		bean.setFlag(data.get("flag"));
 		bean.setFlagName(data.get("flagName"));

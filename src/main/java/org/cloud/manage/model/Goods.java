@@ -2,7 +2,6 @@ package org.cloud.manage.model;
 
 import java.util.List;
 import java.util.Map;
-import java.security.MessageDigest;
 import org.cloud.lang.BaseUtil;
 import org.cloud.manage.utils.JsonUtil;
 

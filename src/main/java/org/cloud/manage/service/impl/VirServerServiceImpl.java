@@ -2,7 +2,6 @@ package org.cloud.manage.service.impl;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.cloud.lang.BaseUtil;
 import org.cloud.manage.dao.VirServerDao;
 import org.cloud.manage.model.VirServer;
@@ -21,7 +20,6 @@ public class VirServerServiceImpl implements VirServerService {
 	@Autowired
 	private VirServerDao dao;
 
-	private Logger log = Logger.getLogger(VirServerServiceImpl.class.getName());
 
 	@Override
 	public PageList<VirServer> findPage(VirServerQuery query, PageBounds pageBounds) {

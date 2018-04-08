@@ -1,16 +1,13 @@
 package org.cloud.manage.service.impl;
 
 import java.util.List;
-import org.apache.log4j.Logger;
 import org.cloud.lang.BaseUtil;
 import org.cloud.manage.dao.PhyServerDao;
 import org.cloud.manage.model.Link;
 import org.cloud.manage.model.PhyServer;
-import org.cloud.manage.model.ProFlag;
 import org.cloud.manage.model.vo.PhyServerQuery;
 import org.cloud.manage.service.PhyServerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
@@ -22,7 +19,6 @@ public class PhyServerServiceImpl implements PhyServerService {
 	@Autowired
 	private PhyServerDao dao;
 
-	private Logger log = Logger.getLogger(PhyServerServiceImpl.class.getName());
 
 	// 返回全部服务器列表
 	@Override

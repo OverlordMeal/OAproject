@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 import org.cloud.manage.model.VirServer;
 import org.cloud.manage.utils.JsonUtil;
 
-import com.alibaba.fastjson.JSONArray;
 
 public class VirServerQuery {
 	

@@ -8,9 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.cloud.interceptor.annotation.NeedLogin;
-import org.cloud.manage.model.Menu;
 import org.cloud.manage.model.ProFlag;
 import org.cloud.manage.model.vo.ProFlagQuery;
 import org.cloud.manage.service.ProFlagService;
@@ -31,7 +29,6 @@ public class ProFlagController {
 	@Autowired
 	private ProFlagService pfs;
 	
-	private Logger log = Logger.getLogger(ProFlagController.class.getName());
 
 	@RequestMapping(value = "/proFlag/getProFlagList", method = RequestMethod.POST)
 	@ResponseBody

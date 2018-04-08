@@ -3,7 +3,6 @@ package org.cloud.manage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 
@@ -15,12 +14,8 @@ import org.cloud.lang.file.FileUtil;
 import org.cloud.lang.init.InitAware;
 import org.cloud.lang.init.InitParam;
 import org.cloud.manage.constant.SystemDataCache;
-import org.cloud.manage.model.PhyServer;
-import org.cloud.manage.model.Switches;
 import org.cloud.manage.model.User;
 import org.cloud.manage.service.ManageUserService;
-import org.cloud.manage.service.PhyServerService;
-import org.cloud.manage.service.SwitchesManageService;
 import org.cloud.manage.utils.Constants;
 import org.cloud.spring.BeanFactory;
 import org.cloud.web.session.SessionProperties;
@@ -34,7 +29,6 @@ public class CloudManageInit implements InitAware {
 	private ManageUserService userService;
 	
 	
-	private Logger log = Logger.getLogger(CloudManageInit.class.getName());
 	
 	@Override
 	public void init(Map<String, Object> paramMap) throws Exception {

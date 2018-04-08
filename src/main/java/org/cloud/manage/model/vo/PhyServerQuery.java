@@ -2,11 +2,8 @@ package org.cloud.manage.model.vo;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.cloud.manage.model.Link;
-import org.cloud.manage.model.ProFlag;
-import org.cloud.manage.utils.JsonUtil;
 
 public class PhyServerQuery extends BaseQuery{
 	//服务器主键id

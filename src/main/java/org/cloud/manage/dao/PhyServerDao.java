@@ -44,7 +44,7 @@ public interface PhyServerDao {
 	public Long updateServer(PhyServerQuery query);
 	
 	
-	public Long updateLink(List list);
+	public Long updateLink(List<Link> list);
 	
 
 	/**
