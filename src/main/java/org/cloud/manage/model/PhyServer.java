@@ -74,6 +74,24 @@ public class PhyServer {
 		}
 	}
 	
+	public String getFlagNameString() {
+		if(BaseUtil.isEmpty(this.flagName)){
+			return "无标签";
+		}
+		else{
+			String str = "";
+			String[] str1 = flagName.split(",");
+			for (int i = 0; i < str1.length; i++) {
+				if(!BaseUtil.isEmpty(str1[i])){
+					str +=str1[i]+",";
+				}
+			}
+		return str;
+		}
+		
+	
+	}
+	
 	
 	public Long getId() {
 		return id;
@@ -202,23 +220,6 @@ public class PhyServer {
 	}
 	
 	
-	public String getFlagNameString() {
-		if(BaseUtil.isEmpty(this.flagName)){
-			return "无标签";
-		}
-		else{
-			String str = "";
-			String[] str1 = flagName.split(",");
-			for (int i = 0; i < str1.length; i++) {
-				if(!BaseUtil.isEmpty(str1[i])){
-					str +=str1[i]+",";
-				}
-			}
-		return str;
-		}
-		
-	
-	}
 
 
 }

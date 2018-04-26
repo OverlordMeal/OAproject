@@ -88,6 +88,4 @@ public class VirServerServiceImpl implements VirServerService {
 		return dao.findPhyServerIp();
 	}
 
-	
-
 }

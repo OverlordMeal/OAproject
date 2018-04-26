@@ -68,7 +68,7 @@ public class PhyServerServiceImpl implements PhyServerService {
 	 * @return
 	 */
 	@Override
-	public Object update(PhyServerQuery query) {
+	public void update(PhyServerQuery query) {
 		if(!BaseUtil.isEmpty(query.getFlag())){
 			String str = query.getFlag();
 			String flag = ","+str+",";
@@ -77,20 +77,14 @@ public class PhyServerServiceImpl implements PhyServerService {
 		dao.updateServer(query);
 		List<Link> list = (List<Link>) query.getLinkList();
 		// 若无信息则直接删除全部信息 退出
-	
-		if (BaseUtil.isEmpty(list) ) {
-			dao.deleteServerLink(query.getId());
-		}
-		// 若有信息 则删除后进行覆盖
-		else {
-			dao.deleteServerLink(query.getId());
+		dao.deleteServerLink(query.getId());
+		if (!BaseUtil.isEmpty(list) ) {
 			for (Link link : list) {
 				link.setServerId(query.getId());
 				dao.insertLink(link);
 			}
-		}	
+		}
 			
-		return null;
 
 	}
 

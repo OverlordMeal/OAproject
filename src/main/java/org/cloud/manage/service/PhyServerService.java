@@ -34,7 +34,7 @@ public interface PhyServerService {
 	/**
 	 * 修改物理服务器信息
 	 */
-	public Object update(PhyServerQuery query);
+	public void update(PhyServerQuery query);
 	
 
 	/**

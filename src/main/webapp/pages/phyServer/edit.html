@@ -175,24 +175,20 @@
 							});
 				        	
 				        	//回显标签信息
-								var _html = '<div>';
-								_html += '<td>标签:</td>'
-								_html += '<td><input class="easyui-input" style="width: 80px;" name="superName" id="superName" readonly="readonly">';
-								_html += '<input type="hidden" style="width: 80px;" name="superId" id="superId"> </td>';
-								_html += '<input type="button" flag="del" value="删除"/>';
-								_html += '</div>';
-								_html = $(_html);
-								_html.find("[flag='del']").click(function() {
-									$(this).parent().remove();
-								});
-								$("#flagPlace").append(_html);
-								$("#superName").val(bean.flagString);
-								$("#superName").click(function(event) {
-									selectTree.initProFlagCheck("superName", function(ids, names) {
-										$("#superName").val(names);
-										$("#superId").val(ids);
-									});
-								});
+				        	var _html = '<div>';
+			    			_html += '<td>标签:</td>';
+			    			_html += '<td><input class="easyui-input" style="width: 80px;" name="superName" id="superName" readonly="readonly">';
+			    			_html += '<input type="hidden" style="width: 80px;" name="superId" id="superId"> </td>';
+			    			_html += '</div>';
+			    			_html = $(_html);
+			    			$("#flagPlace").append(_html);
+			    			$("#superName").val(bean.flagNameString);
+			    			$("#superName").click(function(event) {
+			    				selectTree.initProFlagCheck("superName", function(ids, names) {
+			    					$("#superName").val(names);
+			    					$("#superId").val(ids);
+			    				});
+			    			});
 				        	
 				        	
 				        },

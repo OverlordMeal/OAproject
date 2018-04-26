@@ -18,18 +18,18 @@ public interface SwitchesDao {
 	/**
 	 * 增加交换机信息
 	 */
-	public int insert(Switches switches);
+	public void insert(Switches switches);
 	
 	/**
 	 * 删除交换机信息
 	 */
-	public int delete(Integer id);
+	public void delete(Integer id);
 	
 
 	/**
 	 * 修改交换机信息
 	 */
-	public int update(Switches switches);
+	public void update(Switches switches);
 	
 
 	/**

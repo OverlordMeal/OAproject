@@ -27,22 +27,21 @@ public class SwitchesManageServiceImpl implements SwitchesManageService {
 	}
 
 	@Override
-	public int insert(Switches switches) {
+	public void insert(Switches switches) {
 		// TODO Auto-generated method stub
 		dao.insert(switches);
-		return switches.getId();
 	}
 
 	@Override
-	public int delete(Integer id) {
+	public void delete(Integer id) {
 		// TODO Auto-generated method stub
-		return dao.delete(id);
+		dao.delete(id);
 	}
 
 	@Override
-	public int update(Switches switches) {
+	public void update(Switches switches) {
 		// TODO Auto-generated method stub
-		return dao.update(switches);
+		 dao.update(switches);
 	}
 
 	@Override
